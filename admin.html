@@ -92,6 +92,8 @@ textarea{min-height:60px;resize:none;}
       <span class="lbl">رقم الهاتف</span><input type="tel" id="rPhone" placeholder="07xxxxxxxxx" maxlength="11"/>
       <span class="lbl">المنطقة</span><input type="text" id="rArea" placeholder="الكرامة"/>
       <span class="lbl">كلمة المرور</span><input type="password" id="rPass" placeholder="اختر كلمة مرور"/>
+      <button type="button" onclick="getShopLocation()" style="width:100%;padding:11px;border-radius:11px;border:1.5px solid #0088CC;background:rgba(0,136,204,.07);color:#0088CC;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;">📍 تحديد موقع المحل</button>
+      <div id="locStatus" style="font-size:.75rem;text-align:center;color:var(--muted);margin-bottom:10px;min-height:16px;"></div>
       <button class="btn btn-gold" onclick="doRegister()">✅ تسجيل</button>
     </div>
   </div>
@@ -103,6 +105,7 @@ textarea{min-height:60px;resize:none;}
       <div><div class="tb-name" id="topName">--</div><div class="tb-sub" id="topSub">--</div></div>
     </div>
     <button class="exit-btn" onclick="doLogout()">خروج</button>
+    <button onclick="updateShopLocation()" style="background:none;border:1px solid #0088CC;color:#0088CC;border-radius:8px;padding:5px 9px;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;">📍 تحديث موقعي</button>
   </div>
   <div class="tabs">
     <div class="tab on" id="t1" onclick="goTab(1)">📋 الطلبات</div>
@@ -118,13 +121,16 @@ textarea{min-height:60px;resize:none;}
     <div class="order-form">
       <div class="panel-title">➕ طلب توصيل جديد</div>
       <div class="fg">
-        <div><span class="lbl">المنطقة</span><select id="fArea">
+        <div><span class="lbl">المنطقة</span><select id="fArea" onchange="onAreaChange()">
           <option value="">-- اختر --</option>
-          <option>العباسية</option><option>الحر</option><option>الملتقى</option><option>العلوي</option>
-          <option>الكرامة</option><option>المرحلة</option><option>الحسينية</option><option>الروضة</option>
-          <option>باب الخان</option><option>الجديدة</option><option>طويريج</option><option>أخرى</option>
         </select></div>
         <div><span class="lbl">المبلغ (دينار)</span><input type="number" id="fPrice" placeholder="0"/></div>
+        <div class="s2" id="deliveryPriceBox" style="display:none">
+          <div style="background:#F0FDF4;border:1px solid rgba(0,168,70,.25);border-radius:10px;padding:10px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.8rem;color:var(--muted);">سعر التوصيل</span>
+            <span id="deliveryPriceVal" style="font-weight:900;color:var(--green);font-size:1rem;">0 د.ع</span>
+          </div>
+        </div>
         <div class="s2"><span class="lbl">العنوان</span><textarea id="fAddr" placeholder="الشارع، قرب..."></textarea></div>
         <div><span class="lbl">اسم الزبون</span><input type="text" id="fName" placeholder="الاسم"/></div>
         <div><span class="lbl">هاتف الزبون</span><input type="tel" id="fPhone" placeholder="07xxxxxxxxx" maxlength="11"/></div>
@@ -164,9 +170,70 @@ async function doLogin(){
 async function doRegister(){
   const name=v('rName'),phone=v('rPhone'),area=v('rArea'),pass=v('rPass');
   if(!name||!phone||!area||!pass){toast('⚠️ أكمل الحقول','#F57C00');return;}
-  const r=await api({action:'registerShop',name,phone,area,pass});
+  const r=await api({action:'registerShop',name,phone,area,pass,lat:regLat,lng:regLng});
   if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
   enterApp(r.shop);
+}
+
+let deliveryPrices=[];
+let regLat='', regLng='';
+
+function getShopLocation(){
+  const st=document.getElementById('locStatus');
+  st.textContent='⏳ جاري التحديد...';st.style.color='var(--muted)';
+  navigator.geolocation?.getCurrentPosition(
+    p=>{
+      regLat=p.coords.latitude;regLng=p.coords.longitude;
+      st.textContent='✅ تم تحديد الموقع';st.style.color='var(--green)';
+    },
+    ()=>{st.textContent='⚠️ تعذّر التحديد — تأكد من إذن الموقع';st.style.color='var(--red)';},
+    {enableHighAccuracy:true,timeout:10000}
+  );
+}
+
+async function updateShopLocation(){
+  navigator.geolocation?.getCurrentPosition(
+    async p=>{
+      const lat=p.coords.latitude, lng=p.coords.longitude;
+      await api({action:'updateShopLocation',shopId:shop.id,lat,lng});
+      shop.lat=lat;shop.lng=lng;
+      localStorage.setItem('amwaj_shop',JSON.stringify(shop));
+      toast('✅ تم تحديث موقع المحل','#00A846');
+    },
+    ()=>toast('⚠️ تعذّر التحديد','#E53935'),
+    {enableHighAccuracy:true,timeout:10000}
+  );
+}
+
+async function loadDeliveryPrices(){
+  const r=await api({action:'getDeliveryPrices'});
+  if(!r.ok)return;
+  deliveryPrices=r.prices||[];
+  const sel=document.getElementById('fArea');
+  if(!sel)return;
+  sel.innerHTML='<option value="">-- اختر --</option>';
+  deliveryPrices.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=String(p.area).trim();
+    opt.textContent=String(p.area).trim();
+    sel.appendChild(opt);
+  });
+  // أضف "أخرى" في النهاية
+  const other=document.createElement('option');
+  other.value='أخرى';other.textContent='أخرى';
+  sel.appendChild(other);
+}
+
+function onAreaChange(){
+  const area=document.getElementById('fArea').value;
+  const found=deliveryPrices.find(p=>String(p.area).trim()===area);
+  const box=document.getElementById('deliveryPriceBox');
+  if(found&&found.price){
+    box.style.display='block';
+    document.getElementById('deliveryPriceVal').textContent=Number(found.price).toLocaleString('ar-IQ')+' د.ع';
+  }else{
+    box.style.display='none';
+  }
 }
 
 function enterApp(s){
@@ -176,6 +243,7 @@ function enterApp(s){
   document.getElementById('topName').textContent=s.name;
   document.getElementById('topSub').textContent=s.area+' — '+s.phone;
   startPoll();
+  loadDeliveryPrices();
   if('Notification'in window)Notification.requestPermission();
 }
 
@@ -279,14 +347,19 @@ async function sendOrder(){
   const area=v('fArea'),addr=v('fAddr'),price=v('fPrice'),custName=v('fName'),custPhone=v('fPhone'),note=v('fNote');
   if(!area||!addr||!price||+price<=0||!custName||!custPhone||custPhone.length<10){toast('⚠️ أكمل الحقول','#F57C00');return;}
   const btn=document.getElementById('sendBtn');btn.disabled=true;btn.textContent='⏳ جاري...';
-  const r=await api({action:'sendOrder',shopId:shop.id,shopName:shop.name,shopPhone:shop.phone,shopArea:shop.area,area,addr,price,custName,custPhone,note});
+  // سعر التوصيل من الشيت
+  const found=deliveryPrices.find(p=>String(p.area).trim()===area);
+  const deliveryPrice=found?found.price:'';
+  // موقع المحل من بيانات المحل المحفوظة
+  const shopLat=shop.lat||'';
+  const shopLng=shop.lng||'';
+  const r=await api({action:'sendOrder',shopId:shop.id,shopName:shop.name,shopPhone:shop.phone,shopArea:shop.area,area,addr,price,custName,custPhone,note,deliveryPrice,shopLat,shopLng});
   btn.disabled=false;btn.innerHTML='🛵 إرسال للمندوبين';
   if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
-  // مسح الفورم بعد الإرسال
   ['fArea','fPrice','fAddr','fName','fPhone','fNote'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.value='';
+    const el=document.getElementById(id);if(el)el.value='';
   });
+  document.getElementById('deliveryPriceBox').style.display='none';
   toast('📡 تم الإرسال — إشعار تلغرام للمندوبين','#F57C00');
   loadOrders();
 }
