@@ -143,10 +143,9 @@ function switchTab(t){
 }
 
 async function doLoginExist(){
-  const phone=document.getElementById('lphone2').value.trim();
+  let phone=document.getElementById('lphone2').value.trim();
+  phone=phone.replace(/^0/,'');
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
-  const r=await api({action:'getOrders',shopId:'ALL'});
-  // نجيب بيانات المندوب من الشيت
   const r2=await api({action:'registerDriver',name:'',phone});
   if(!r2.ok){toast('❌ '+r2.error,'#E53935');return;}
   const drv=r2.driver;
@@ -158,7 +157,8 @@ async function doLoginExist(){
 
 async function doLogin(){
   const name=document.getElementById('lname').value.trim();
-  const phone=document.getElementById('lphone').value.trim();
+  let phone=document.getElementById('lphone').value.trim();
+  phone=phone.replace(/^0/,'');
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r=await api({action:'registerDriver',name,phone});
