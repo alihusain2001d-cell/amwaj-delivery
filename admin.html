@@ -235,7 +235,19 @@ function buildCard(o){
   let drv='';
   if(o.drvName&&o.status==='confirmed'){
     const wa=`https://wa.me/964${(o.drvPhone||'').replace(/^0/,'')}?text=${encodeURIComponent('مرحباً '+o.drvName+' — طلب '+o.id)}`;
-    drv=`<div class="drv-row"><span style="font-size:1.4rem">🛵</span><div style="flex:1"><div style="font-weight:900">${o.drvName}</div><div style="color:var(--muted);font-size:.77rem">📞 ${o.drvPhone}</div></div><a href="${wa}" target="_blank" class="wa-btn">💬 واتساب</a></div>`;
+    const hasLoc=o.drvLat&&o.drvLng&&String(o.drvLat)!==''&&String(o.drvLng)!=='';
+    const mapsLink=hasLoc?`https://maps.google.com/?q=${o.drvLat},${o.drvLng}`:'';
+    drv=`<div class="drv-row">
+      <span style="font-size:1.8rem">🛵</span>
+      <div style="flex:1">
+        <div style="font-weight:900;font-size:.95rem">${o.drvName}</div>
+        <div style="color:var(--muted);font-size:.77rem;margin-top:2px">📞 ${o.drvPhone}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        <a href="${wa}" target="_blank" class="wa-btn">💬 واتساب</a>
+        ${hasLoc?`<a href="${mapsLink}" target="_blank" style="display:flex;align-items:center;gap:4px;background:rgba(0,136,204,.1);border:1px solid rgba(0,136,204,.25);color:var(--blue);border-radius:8px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;">📍 موقعه</a>`:''}
+      </div>
+    </div>`;
   }
   return`<div class="ocard ${o.status==='sent'?'c-sent':'c-conf'}">
     <div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
