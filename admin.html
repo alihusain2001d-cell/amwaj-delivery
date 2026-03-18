@@ -3,386 +3,385 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أمواج — لوحة المحل</title>
+<title>أمواج — المندوب</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--gold:#E6A800;--bg:#F0F4F8;--card:#FFFFFF;--card2:#E8EFF5;--green:#00A846;--red:#E53935;--blue:#0088CC;--orange:#F57C00;--text:#1A1A2E;--muted:#6B7280;}
+:root{--cyan:#0088CC;--bg:#F0F4F8;--card:#FFFFFF;--card2:#E8EFF5;--green:#00A846;--red:#E53935;--orange:#F57C00;--gold:#F9A825;--text:#1A1A2E;--muted:#6B7280;}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-input,select,textarea{width:100%;background:#F8FAFC;border:1.5px solid #D1D5DB;border-radius:11px;padding:12px 15px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.93rem;margin-bottom:12px;outline:none;transition:all .25s;direction:rtl;}
-input:focus,select:focus,textarea:focus{border-color:var(--orange);}
-textarea{min-height:60px;resize:none;}
-.lbl{display:block;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:4px;}
-.btn{border:none;border-radius:12px;padding:13px 18px;font-family:'Cairo',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;}
-.btn-orange{background:linear-gradient(135deg,var(--orange),#E53935);color:#fff;}
-.btn-gold{background:linear-gradient(135deg,#F9A825,#E65100);color:#fff;}
-.btn-ghost-red{background:rgba(229,57,53,.1);color:var(--red);border:1px solid rgba(229,57,53,.25);}
-.btn:disabled{background:#ccc!important;color:#888!important;cursor:not-allowed;}
-#authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.auth-card{background:var(--card);border:1px solid #E5E7EB;border-radius:22px;padding:36px 28px;width:100%;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,.1);}
-.auth-logo{text-align:center;margin-bottom:20px;}
-.auth-logo h2{font-size:1.4rem;font-weight:900;color:var(--orange);margin-top:8px;}
-.tab-btns{display:flex;gap:8px;margin-bottom:20px;}
-.tab-btn{flex:1;padding:10px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #E5E7EB;background:#F8FAFC;color:var(--muted);transition:all .2s;}
-.tab-btn.on{border-color:var(--orange);background:rgba(245,124,0,.08);color:var(--orange);}
+#loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lcard{background:var(--card);border:1px solid #E5E7EB;border-radius:22px;padding:36px 28px;width:100%;max-width:390px;box-shadow:0 8px 24px rgba(0,0,0,.1);}
+.lcard h2{text-align:center;font-size:1.5rem;font-weight:900;color:var(--cyan);margin-bottom:6px;}
+.lcard p{text-align:center;color:var(--muted);margin-bottom:24px;font-size:.84rem;}
+input[type="text"],input[type="tel"]{width:100%;background:#F8FAFC;border:1.5px solid #D1D5DB;border-radius:11px;padding:12px 15px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.93rem;margin-bottom:12px;outline:none;transition:all .25s;direction:rtl;}
+input:focus{border-color:var(--cyan);}
+.btn-login{width:100%;background:linear-gradient(135deg,var(--cyan),#005F8F);color:#fff;border:none;border-radius:13px;padding:15px;font-size:1rem;font-weight:900;font-family:'Cairo',sans-serif;cursor:pointer;}
 #app{display:none;}
-.topbar{background:var(--card);border-bottom:1px solid #E5E7EB;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.tb-name{font-size:.92rem;font-weight:900;color:var(--orange);}
-.tb-sub{font-size:.66rem;color:var(--muted);}
+.topbar{background:var(--card);border-bottom:1px solid #E5E7EB;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.drv-name-top{font-weight:900;font-size:.9rem;}
+.drv-sub{font-size:.68rem;color:var(--green);}
 .exit-btn{background:none;border:1px solid #D1D5DB;color:var(--muted);border-radius:8px;padding:5px 11px;font-family:'Cairo',sans-serif;font-size:.74rem;cursor:pointer;}
-.tabs{display:flex;background:var(--card);border-bottom:1px solid #E5E7EB;}
-.tab{flex:1;padding:12px 4px;text-align:center;font-weight:700;font-size:.78rem;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;}
-.tab.on{color:var(--orange);border-bottom-color:var(--orange);}
-.wrap{max-width:660px;margin:0 auto;padding:14px;}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px;}
+.wrap{max-width:460px;margin:0 auto;padding:13px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px;}
 .sbox{background:var(--card);border:1px solid #E5E7EB;border-radius:12px;padding:12px 6px;text-align:center;}
-.sval{font-size:1.4rem;font-weight:900;}
-.slbl{font-size:.62rem;color:var(--muted);margin-top:2px;}
-.order-form{background:var(--card);border:1px solid #FCD34D;border-radius:18px;padding:18px;margin-bottom:15px;}
-.panel-title{font-size:.78rem;font-weight:900;color:var(--orange);margin-bottom:14px;}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;}
-.fg .s2{grid-column:1/-1;}
-.sec-hd{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #E5E7EB;}
-.ocard{background:var(--card);border:1px solid #E5E7EB;border-radius:15px;padding:16px;margin-bottom:11px;}
-.ocard.c-sent{border-color:rgba(245,124,0,.4);}
-.ocard.c-conf{border-color:rgba(0,168,70,.4);}
-.ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:5px;}
-.cid{font-size:.82rem;font-weight:800;color:var(--blue);}
-.ctime{font-size:.68rem;color:var(--muted);}
-.chip{padding:3px 11px;border-radius:20px;font-size:.68rem;font-weight:800;}
-.ch-sent{background:rgba(245,124,0,.12);color:var(--orange);}
+.sval{font-size:1.35rem;font-weight:900;color:var(--cyan);}
+.slbl{font-size:.64rem;color:var(--muted);margin-top:2px;}
+.sec-hd{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;}
+.pill{background:var(--red);color:#fff;border-radius:20px;padding:1px 7px;font-size:.64rem;font-weight:900;}
+.ocard{background:var(--card);border:1px solid #E5E7EB;border-radius:15px;padding:15px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.ocard.available{border-color:rgba(245,124,0,.5);box-shadow:0 0 16px rgba(245,124,0,.1);}
+.ocard.mine-conf{border-color:rgba(0,168,70,.45);}
+.ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:4px;}
+.cid{color:var(--cyan);font-weight:800;font-size:.82rem;}
+.ctime{color:var(--muted);font-size:.67rem;}
+.chip{padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:800;}
+.ch-avail{background:rgba(245,124,0,.12);color:var(--orange);}
 .ch-conf{background:rgba(0,168,70,.12);color:var(--green);}
-.ch-done{background:rgba(249,168,37,.12);color:#E6A800;}
-.ch-cancel{background:rgba(229,57,53,.1);color:var(--red);}
-.cbody{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;margin-bottom:10px;}
-.cf-lbl{font-size:.66rem;color:var(--muted);margin-bottom:1px;}
-.cf-val{font-size:.86rem;font-weight:700;}
-.cf-val.price{color:var(--orange);font-size:1.05rem;font-weight:900;}
-.cf-s2{grid-column:1/-1;}
-.drv-row{display:flex;align-items:center;gap:11px;background:#F0FDF4;border:1px solid rgba(0,168,70,.2);border-radius:11px;padding:11px 13px;margin-bottom:10px;}
-.wa-btn{display:flex;align-items:center;gap:4px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25D366;border-radius:8px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;}
-.cactions{display:flex;gap:7px;}
-.cactions .btn{padding:10px 8px;font-size:.8rem;}
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.2);}
-.toast.on{transform:translateX(-50%) translateY(0);}
+.shop-row{display:flex;align-items:center;gap:9px;background:#F5F3FF;border:1px solid rgba(123,31,162,.15);border-radius:11px;padding:9px 12px;margin-bottom:9px;}
+.shop-nm{font-weight:900;font-size:.85rem;color:#7B1FA2;}
+.shop-ph{font-size:.72rem;color:var(--muted);}
+.carea{font-size:.97rem;font-weight:900;margin-bottom:2px;}
+.caddr{font-size:.78rem;color:var(--muted);margin-bottom:7px;}
+.cmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.cprice{font-size:1.1rem;font-weight:900;color:var(--gold);}
+.ccust{font-size:.77rem;color:var(--muted);}
+.cnote{font-size:.76rem;color:var(--muted);margin-bottom:9px;background:#F9FAFB;border-radius:8px;padding:7px 10px;border:1px solid #E5E7EB;}
+.btn-accept{width:100%;background:linear-gradient(135deg,var(--green),#007A33);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;}
+.btn-delivered{width:100%;background:linear-gradient(135deg,var(--cyan),#005F8F);color:#fff;border:none;border-radius:12px;padding:12px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-top:6px;}
 #loadingOverlay{position:fixed;inset:0;background:#F0F4F8;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px;}
-.spinner{width:44px;height:44px;border:3px solid rgba(245,124,0,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;}
+.spinner{width:44px;height:44px;border:3px solid rgba(0,136,204,.15);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:42px 16px;color:var(--muted);}
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.15);}
+.toast.on{transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);}
 .empty-ico{font-size:46px;opacity:.3;margin-bottom:10px;}
-@media(max-width:460px){.stats{grid-template-columns:repeat(2,1fr);}.fg{grid-template-columns:1fr;}.fg .s2{grid-column:1;}.cbody{grid-template-columns:1fr;}.cf-s2{grid-column:1;}}
 </style>
 </head>
 <body>
 <div id="loadingOverlay"><div class="spinner"></div><p style="color:var(--muted);font-size:.85rem">جاري التحميل...</p></div>
-<div id="authWrap" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo"><div style="font-size:2.8rem">🏪</div><h2>أمواج للتوصيل</h2><p style="color:var(--muted);font-size:.82rem">لوحة تحكم المحل</p></div>
-    <div class="tab-btns">
-      <button class="tab-btn on" id="tbLogin" onclick="showAuthTab('login')">دخول</button>
-      <button class="tab-btn" id="tbReg" onclick="showAuthTab('register')">تسجيل جديد</button>
+<div id="loginWrap" style="display:none">
+  <div class="lcard">
+    <h2>🛵 لوحة المندوب</h2>
+    <p>اختر طريقة الدخول</p>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #0088CC;background:rgba(0,136,204,.08);color:#0088CC;">دخول</button>
+      <button id="tabReg" onclick="switchTab('reg')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #D1D5DB;background:#F8FAFC;color:#6B7280;">تسجيل جديد</button>
     </div>
-    <div id="loginForm">
-      <span class="lbl">رقم الهاتف</span><input type="tel" id="lPhone" placeholder="07xxxxxxxxx" maxlength="11"/>
-      <span class="lbl">كلمة المرور</span><input type="password" id="lPass" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"/>
-      <button class="btn btn-gold" onclick="doLogin()">🔑 دخول</button>
+    <!-- دخول -->
+    <div id="formLogin">
+      <input type="tel" id="lphone2" placeholder="07xxxxxxxxx — رقمك المسجل" maxlength="11"/>
+      <button class="btn-login" onclick="doLoginExist()">🔑 دخول</button>
     </div>
-    <div id="registerForm" style="display:none">
-      <span class="lbl">اسم المحل</span><input type="text" id="rName" placeholder="أمواج للإلكترونيات"/>
-      <span class="lbl">رقم الهاتف</span><input type="tel" id="rPhone" placeholder="07xxxxxxxxx" maxlength="11"/>
-      <span class="lbl">المنطقة</span><input type="text" id="rArea" placeholder="الكرامة"/>
-      <span class="lbl">كلمة المرور</span><input type="password" id="rPass" placeholder="اختر كلمة مرور"/>
-      <button type="button" onclick="getShopLocation()" style="width:100%;padding:11px;border-radius:11px;border:1.5px solid #0088CC;background:rgba(0,136,204,.07);color:#0088CC;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;">📍 تحديد موقع المحل</button>
-      <div id="locStatus" style="font-size:.75rem;text-align:center;color:var(--muted);margin-bottom:10px;min-height:16px;"></div>
-      <button class="btn btn-gold" onclick="doRegister()">✅ تسجيل</button>
+    <!-- تسجيل جديد -->
+    <div id="formReg" style="display:none">
+      <input type="text" id="lname" placeholder="اسمك الكريم"/>
+      <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
+      <button class="btn-login" onclick="doLogin()">🚀 تسجيل ودخول</button>
     </div>
   </div>
 </div>
 <div id="app">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:1.4rem">🏪</span>
-      <div><div class="tb-name" id="topName">--</div><div class="tb-sub" id="topSub">--</div></div>
+    <div>
+      <div class="drv-name-top" id="topName">--</div>
+      <div class="drv-sub">● متصل</div>
     </div>
     <button class="exit-btn" onclick="doLogout()">خروج</button>
-    <button onclick="updateShopLocation()" style="background:none;border:1px solid #0088CC;color:#0088CC;border-radius:8px;padding:5px 9px;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;">📍 تحديث موقعي</button>
-  </div>
-  <div class="tabs">
-    <div class="tab on" id="t1" onclick="goTab(1)">📋 الطلبات</div>
-    <div class="tab" id="t2" onclick="goTab(2)">✅ المنجزة</div>
   </div>
   <div class="wrap">
     <div class="stats">
-      <div class="sbox"><div class="sval" id="s1" style="color:var(--orange)">0</div><div class="slbl">ينتظر</div></div>
-      <div class="sbox"><div class="sval" id="s2" style="color:var(--green)">0</div><div class="slbl">في الطريق</div></div>
-      <div class="sbox"><div class="sval" id="s3" style="color:#E6A800">0</div><div class="slbl">مسلّمة اليوم</div></div>
+      <div class="sbox"><div class="sval" id="stA">0</div><div class="slbl">متاحة</div></div>
+      <div class="sbox"><div class="sval" id="stM">0</div><div class="slbl">طلباتي</div></div>
+      <div class="sbox"><div class="sval" id="stD">0</div><div class="slbl">منجزة</div></div>
     </div>
-    <!-- فورم الطلب ثابت هنا — ما يُعاد رسمه -->
-    <div class="order-form">
-      <div class="panel-title">➕ طلب توصيل جديد</div>
-      <div class="fg">
-        <div><span class="lbl">المنطقة</span><select id="fArea" onchange="onAreaChange()">
-          <option value="">-- اختر --</option>
-        </select></div>
-        <div><span class="lbl">المبلغ (دينار)</span><input type="number" id="fPrice" placeholder="0"/></div>
-        <div class="s2" id="deliveryPriceBox" style="display:none">
-          <div style="background:#F0FDF4;border:1px solid rgba(0,168,70,.25);border-radius:10px;padding:10px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:.8rem;color:var(--muted);">سعر التوصيل</span>
-            <span id="deliveryPriceVal" style="font-weight:900;color:var(--green);font-size:1rem;">0 د.ع</span>
-          </div>
-        </div>
-        <div class="s2"><span class="lbl">العنوان</span><textarea id="fAddr" placeholder="الشارع، قرب..."></textarea></div>
-        <div><span class="lbl">اسم الزبون</span><input type="text" id="fName" placeholder="الاسم"/></div>
-        <div><span class="lbl">هاتف الزبون</span><input type="tel" id="fPhone" placeholder="07xxxxxxxxx" maxlength="11"/></div>
-        <div class="s2"><span class="lbl">ملاحظة</span><input type="text" id="fNote" placeholder="اختياري..."/></div>
+    <!-- تبويبات -->
+    <div style="display:flex;background:#fff;border-radius:12px;margin-bottom:13px;overflow:hidden;border:1px solid #E5E7EB;">
+      <div id="dTab1" onclick="dGoTab(1)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid var(--cyan);color:var(--cyan);">📦 الطلبات</div>
+      <div id="dTab2" onclick="dGoTab(2)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--muted);">✅ المنجزة</div>
+    </div>
+    <div id="dTc1">
+      <div id="mineSec" style="display:none">
+        <div class="sec-hd">🛵 طلباتي النشطة</div>
+        <div id="mineList"></div>
       </div>
-      <button class="btn btn-orange" id="sendBtn" onclick="sendOrder()">🛵 إرسال للمندوبين</button>
+      <div>
+        <div class="sec-hd">📦 الطلبات المتاحة <span class="pill" id="availPill" style="display:none">0</span></div>
+        <div id="availList"></div>
+      </div>
     </div>
-    <div id="tc1"></div>
-    <div id="tc2" style="display:none"></div>
+    <div id="dTc2" style="display:none">
+      <!-- فلتر التاريخ -->
+      <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:13px;margin-bottom:12px;">
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:7px;">📅 اختر التاريخ</div>
+        <input type="date" id="dateFilter" style="margin-bottom:8px;" onchange="filterDone()"/>
+        <div style="display:flex;gap:7px;">
+          <button onclick="setToday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid var(--cyan);background:rgba(0,136,204,.08);color:var(--cyan);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">اليوم</button>
+          <button onclick="setYesterday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">أمس</button>
+          <button onclick="clearDate()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">الكل</button>
+        </div>
+      </div>
+      <!-- الإجمالي -->
+      <div id="doneTotal" style="display:none;background:linear-gradient(135deg,var(--green),#007A33);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center;color:#fff;">
+        <div style="font-size:.75rem;opacity:.85;margin-bottom:4px;">إجمالي التوصيل</div>
+        <div id="doneTotalVal" style="font-size:1.6rem;font-weight:900;">0 د.ع</div>
+        <div id="doneTotalCount" style="font-size:.75rem;opacity:.85;margin-top:3px;">0 طلب</div>
+      </div>
+      <div id="doneList"></div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
 const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX3GMC5ocvwMQ3VZnD564Bom4Otz3S0j6WUEGZ-q/exec';
-let shop=null,curtab=1,pollTimer=null,lastConf=-1,aCtx=null;
+let me=null,pollTimer=null,prevAvail=-1,aCtx=null;
 
 async function api(data){
   const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data),redirect:'follow'});
   return r.json();
 }
 
-function showAuthTab(t){
-  document.getElementById('tbLogin').className='tab-btn'+(t==='login'?' on':'');
-  document.getElementById('tbReg').className='tab-btn'+(t==='register'?' on':'');
-  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
-  document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+document.addEventListener('touchstart',unlockAudio,{once:true});
+document.addEventListener('click',unlockAudio,{once:true});
+function unlockAudio(){try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+function beep(){
+  try{
+    if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(aCtx.state==='suspended')aCtx.resume();
+    [440,550,660,550,440].forEach((f,i)=>{
+      const o=aCtx.createOscillator(),g=aCtx.createGain();
+      o.connect(g);g.connect(aCtx.destination);o.frequency.value=f;o.type='sine';
+      const t=aCtx.currentTime+i*.12;
+      g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);
+      o.start(t);o.stop(t+.22);
+    });
+  }catch(e){}
+}
+
+function switchTab(t){
+  document.getElementById('tabLogin').style.borderColor=t==='login'?'#0088CC':'#D1D5DB';
+  document.getElementById('tabLogin').style.color=t==='login'?'#0088CC':'#6B7280';
+  document.getElementById('tabLogin').style.background=t==='login'?'rgba(0,136,204,.08)':'#F8FAFC';
+  document.getElementById('tabReg').style.borderColor=t==='reg'?'#0088CC':'#D1D5DB';
+  document.getElementById('tabReg').style.color=t==='reg'?'#0088CC':'#6B7280';
+  document.getElementById('tabReg').style.background=t==='reg'?'rgba(0,136,204,.08)':'#F8FAFC';
+  document.getElementById('formLogin').style.display=t==='login'?'block':'none';
+  document.getElementById('formReg').style.display=t==='reg'?'block':'none';
+}
+
+async function doLoginExist(){
+  let phone=document.getElementById('lphone2').value.trim();
+  phone=phone.replace(/^0/,'');
+  if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
+  const r2=await api({action:'registerDriver',name:'',phone});
+  if(!r2.ok){toast('❌ '+r2.error,'#E53935');return;}
+  const drv=r2.driver;
+  if(!drv.name){toast('❌ رقمك غير مسجل — سجّل أولاً','#E53935');return;}
+  me={id:drv.id,name:drv.name,phone:drv.phone};
+  localStorage.setItem('me_drv',JSON.stringify(me));
+  openApp();
 }
 
 async function doLogin(){
-  const phone=v('lPhone'),pass=v('lPass');
-  if(!phone||!pass){toast('⚠️ أكمل البيانات','#F57C00');return;}
-  const r=await api({action:'loginShop',phone,pass});
+  const name=document.getElementById('lname').value.trim();
+  let phone=document.getElementById('lphone').value.trim();
+  phone=phone.replace(/^0/,'');
+  if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
+  if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
+  const r=await api({action:'registerDriver',name,phone});
   if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
-  enterApp(r.shop);
-}
-
-async function doRegister(){
-  const name=v('rName'),phone=v('rPhone'),area=v('rArea'),pass=v('rPass');
-  if(!name||!phone||!area||!pass){toast('⚠️ أكمل الحقول','#F57C00');return;}
-  const r=await api({action:'registerShop',name,phone,area,pass,lat:regLat,lng:regLng});
-  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
-  enterApp(r.shop);
-}
-
-let deliveryPrices=[];
-let regLat='', regLng='';
-
-function getShopLocation(){
-  const st=document.getElementById('locStatus');
-  st.textContent='⏳ جاري التحديد...';st.style.color='var(--muted)';
-  navigator.geolocation?.getCurrentPosition(
-    p=>{
-      regLat=p.coords.latitude;regLng=p.coords.longitude;
-      st.textContent='✅ تم تحديد الموقع';st.style.color='var(--green)';
-    },
-    ()=>{st.textContent='⚠️ تعذّر التحديد — تأكد من إذن الموقع';st.style.color='var(--red)';},
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-
-async function updateShopLocation(){
-  navigator.geolocation?.getCurrentPosition(
-    async p=>{
-      const lat=p.coords.latitude, lng=p.coords.longitude;
-      await api({action:'updateShopLocation',shopId:shop.id,lat,lng});
-      shop.lat=lat;shop.lng=lng;
-      localStorage.setItem('amwaj_shop',JSON.stringify(shop));
-      toast('✅ تم تحديث موقع المحل','#00A846');
-    },
-    ()=>toast('⚠️ تعذّر التحديد','#E53935'),
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-
-async function loadDeliveryPrices(){
-  const r=await api({action:'getDeliveryPrices'});
-  if(!r.ok)return;
-  deliveryPrices=r.prices||[];
-  const sel=document.getElementById('fArea');
-  if(!sel)return;
-  sel.innerHTML='<option value="">-- اختر --</option>';
-  deliveryPrices.forEach(p=>{
-    const opt=document.createElement('option');
-    opt.value=String(p.area).trim();
-    opt.textContent=String(p.area).trim();
-    sel.appendChild(opt);
-  });
-  // أضف "أخرى" في النهاية
-  const other=document.createElement('option');
-  other.value='أخرى';other.textContent='أخرى';
-  sel.appendChild(other);
-}
-
-function onAreaChange(){
-  const area=document.getElementById('fArea').value;
-  const found=deliveryPrices.find(p=>String(p.area).trim()===area);
-  const box=document.getElementById('deliveryPriceBox');
-  if(found&&found.price){
-    box.style.display='block';
-    document.getElementById('deliveryPriceVal').textContent=Number(found.price).toLocaleString('ar-IQ')+' د.ع';
-  }else{
-    box.style.display='none';
-  }
-}
-
-function enterApp(s){
-  shop=s;localStorage.setItem('amwaj_shop',JSON.stringify(s));
-  document.getElementById('authWrap').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('topName').textContent=s.name;
-  document.getElementById('topSub').textContent=s.area+' — '+s.phone;
-  startPoll();
-  loadDeliveryPrices();
-  if('Notification'in window)Notification.requestPermission();
+  me={id:r.driver.id||'drv_'+phone,name,phone};
+  localStorage.setItem('me_drv',JSON.stringify(me));
+  openApp();
 }
 
 function doLogout(){
-  clearInterval(pollTimer);shop=null;
-  localStorage.removeItem('amwaj_shop');
+  clearInterval(pollTimer);me=null;
+  localStorage.removeItem('me_drv');
+  document.getElementById('loginWrap').style.display='flex';
   document.getElementById('app').style.display='none';
-  document.getElementById('authWrap').style.display='flex';
 }
 
-function goTab(n){
-  curtab=n;
+function openApp(){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('topName').textContent=me.name;
+  startPoll();
+}
+
+let dCurTab=1, allDoneOrders=[];
+
+function dGoTab(n){
+  dCurTab=n;
   [1,2].forEach(i=>{
-    document.getElementById('t'+i).className='tab'+(i===n?' on':'');
-    document.getElementById('tc'+i).style.display=i===n?'block':'none';
+    const t=document.getElementById('dTab'+i);
+    t.style.borderBottom=i===n?'2.5px solid var(--cyan)':'2.5px solid transparent';
+    t.style.color=i===n?'var(--cyan)':'var(--muted)';
+    document.getElementById('dTc'+i).style.display=i===n?'block':'none';
   });
-  loadOrders();
+  if(n===2)filterDone();
 }
 
-function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,5000);}
+function setToday(){
+  const d=new Date();
+  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
+  filterDone();
+}
+function setYesterday(){
+  const d=new Date();d.setDate(d.getDate()-1);
+  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
+  filterDone();
+}
+function clearDate(){
+  document.getElementById('dateFilter').value='';
+  filterDone();
+}
+
+function filterDone(){
+  const dateVal=document.getElementById('dateFilter').value;
+  let filtered=allDoneOrders;
+  if(dateVal){
+    filtered=allDoneOrders.filter(o=>{
+      const d=new Date(o.ts);
+      const dStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      return dStr===dateVal;
+    });
+  }
+  const total=filtered.reduce((s,o)=>s+Number(o.price||0),0);
+  const totalEl=document.getElementById('doneTotal');
+  if(filtered.length){
+    totalEl.style.display='block';
+    document.getElementById('doneTotalVal').textContent=total.toLocaleString('ar-IQ')+' د.ع';
+    document.getElementById('doneTotalCount').textContent=filtered.length+' طلب';
+  }else{
+    totalEl.style.display='none';
+  }
+  const el=document.getElementById('doneList');
+  if(!filtered.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات</p></div>`;return;}
+  el.innerHTML=filtered.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>`
+    <div class="ocard mine-conf" style="border-color:rgba(0,168,70,.3);">
+      <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf" style="background:rgba(0,168,70,.12);color:var(--green);">✅ مسلّم</span><span class="ctime">${ago(o.ts)}</span></div>
+      <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📌 ${o.shopArea}</div></div></div>
+      <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div style="font-size:.77rem;color:var(--muted);">📍 ${o.area}</div></div>
+    </div>`).join('');
+}
+
+function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,4000);}
 
 async function loadOrders(){
-  if(!shop)return;
-  const r=await api({action:'getOrders',shopId:shop.id});
+  if(!me)return;
+  const r=await api({action:'getOrders',shopId:'ALL'});
   if(!r.ok)return;
-  const orders=r.orders||[];
-  const today=new Date().toDateString();
-  document.getElementById('s1').textContent=orders.filter(o=>o.status==='sent').length;
-  document.getElementById('s2').textContent=orders.filter(o=>o.status==='confirmed').length;
-  document.getElementById('s3').textContent=orders.filter(o=>o.status==='delivered'&&new Date(o.ts).toDateString()===today).length;
-  const conf=orders.filter(o=>o.status==='confirmed').length;
-  if(lastConf>=0&&conf>lastConf){beep();toast('🛵 مندوب في الطريق!','#00A846');}
-  lastConf=conf;
-  // تحديث الطلبات فقط — الفورم ثابت بالـ HTML
-  if(curtab===1)renderOrders(orders.filter(o=>!['delivered','cancelled'].includes(o.status)));
-  if(curtab===2)renderDone(orders.filter(o=>['delivered','cancelled'].includes(o.status)));
-}
+  const all=r.orders||[];
+  const avail=all.filter(o=>o.status==='sent');
+  const mine=all.filter(o=>String(o.drvId)===String(me.id)&&!['delivered','cancelled'].includes(o.status));
+  const done=all.filter(o=>String(o.drvId)===String(me.id)&&o.status==='delivered');
+  allDoneOrders=done;
 
-function renderOrders(active){
-  const el=document.getElementById('tc1');
-  if(!active.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات نشطة</p></div>`;return;}
-  el.innerHTML=`<div class="sec-hd">الطلبات النشطة (${active.length})</div>`+active.map(buildCard).join('');
-}
+  document.getElementById('stA').textContent=avail.length;
+  document.getElementById('stM').textContent=mine.length;
+  document.getElementById('stD').textContent=done.length;
 
-function renderDone(done){
-  const el=document.getElementById('tc2');
-  if(!done.length){el.innerHTML=`<div class="empty"><div class="empty-ico">✅</div><p>لا يوجد منجزة</p></div>`;return;}
-  el.innerHTML=done.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>{
-    const chip=o.status==='delivered'?`<span class="chip ch-done">✅ مسلّم</span>`:`<span class="chip ch-cancel">✕ ملغي</span>`;
-    const drvInfo=o.drvName?`<div style="background:#F0FDF4;border:1px solid rgba(0,168,70,.2);border-radius:9px;padding:8px 11px;margin-top:8px;display:flex;align-items:center;gap:8px">
-      <span>🛵</span><div style="flex:1"><div style="font-weight:800;font-size:.85rem">${o.drvName}</div><div style="color:var(--muted);font-size:.74rem">📞 ${o.drvPhone}</div></div>
-    </div>`:'';
-    return`<div class="ocard">
-      <div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
-      <div class="cbody">
-        <div><div class="cf-lbl">المنطقة</div><div class="cf-val">📍 ${o.area}</div></div>
-        <div><div class="cf-lbl">المبلغ</div><div class="cf-val price">${fmt(o.price)} د.ع</div></div>
-        <div><div class="cf-lbl">الزبون</div><div class="cf-val">👤 ${o.custName}</div></div>
-        <div><div class="cf-val">📞 ${o.custPhone}</div></div>
-        <div class="cf-s2"><div class="cf-val" style="font-size:.8rem">🗺 ${o.addr}</div></div>
-        ${o.note?`<div class="cf-s2"><div class="cf-val" style="font-size:.8rem">📝 ${o.note}</div></div>`:''}
-      </div>${drvInfo}
-    </div>`;
-  }).join('');
-}
-
-function buildCard(o){
-  const chip=o.status==='sent'?`<span class="chip ch-sent">📡 ينتظر</span>`:`<span class="chip ch-conf">🛵 في الطريق</span>`;
-  let drv='';
-  if(o.drvName&&o.status==='confirmed'){
-    const wa=`https://wa.me/964${String(o.drvPhone||'').replace(/^0/,'')}?text=${encodeURIComponent('مرحباً '+o.drvName+' — طلب '+o.id)}`;
-    const hasLoc=o.drvLat&&o.drvLng&&String(o.drvLat)!==''&&String(o.drvLng)!=='';
-    const mapsLink=hasLoc?`https://maps.google.com/?q=${o.drvLat},${o.drvLng}`:'';
-    drv=`<div class="drv-row">
-      <span style="font-size:1.8rem">🛵</span>
-      <div style="flex:1">
-        <div style="font-weight:900;font-size:.95rem">${o.drvName}</div>
-        <div style="color:var(--muted);font-size:.77rem;margin-top:2px">📞 ${o.drvPhone}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
-        <a href="${wa}" target="_blank" class="wa-btn">💬 واتساب</a>
-        ${hasLoc?`<a href="${mapsLink}" target="_blank" style="display:flex;align-items:center;gap:4px;background:rgba(0,136,204,.1);border:1px solid rgba(0,136,204,.25);color:var(--blue);border-radius:8px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;">📍 موقعه</a>`:''}
-      </div>
-    </div>`;
+  if(prevAvail>=0&&avail.length>prevAvail){
+    beep();toast('🔔 طلب جديد — كن الأول!','#F57C00');
+    if(Notification.permission==='granted')
+      new Notification('🛵 طلب جديد!',{body:'وصل طلب توصيل جديد',icon:'/icon-192.png',vibrate:[300,100,300]});
   }
-  return`<div class="ocard ${o.status==='sent'?'c-sent':'c-conf'}">
-    <div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
-    <div class="cbody">
-      <div><div class="cf-lbl">المنطقة</div><div class="cf-val">📍 ${o.area}</div></div>
-      <div><div class="cf-lbl">المبلغ</div><div class="cf-val price">${fmt(o.price)} د.ع</div></div>
-      <div><div class="cf-lbl">الزبون</div><div class="cf-val">👤 ${o.custName}</div></div>
-      <div><div class="cf-val">📞 ${o.custPhone}</div></div>
-      <div class="cf-s2"><div class="cf-val" style="font-size:.8rem">🗺 ${o.addr}</div></div>
-      ${o.note?`<div class="cf-s2"><div class="cf-val" style="font-size:.8rem">📝 ${o.note}</div></div>`:''}
-    </div>${drv}
-    <div class="cactions"><button class="btn btn-ghost-red" onclick="cancelOrder('${o.id}')">✕ إلغاء</button></div>
+  prevAvail=avail.length;
+
+  const p=document.getElementById('availPill');
+  p.style.display=avail.length?'inline-block':'none';p.textContent=avail.length;
+
+  const mineSec=document.getElementById('mineSec'),mineList=document.getElementById('mineList');
+  if(mine.length){mineSec.style.display='block';mineList.innerHTML=mine.map(buildMine).join('');}
+  else mineSec.style.display='none';
+
+  const availList=document.getElementById('availList');
+  availList.innerHTML=avail.length?avail.map(buildAvail).join(''):`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات الآن</p></div>`;
+
+  if(dCurTab===2)filterDone();
+}
+
+function shopRow(o){
+  const hasLoc=o.shopLat&&o.shopLng&&String(o.shopLat)!=='';
+  const mapsLink=hasLoc?`https://maps.google.com/?q=${o.shopLat},${o.shopLng}`:'';
+  const wa=`https://wa.me/964${String(o.shopPhone||'').replace(/^0/,'')}`;
+  return`<div class="shop-row">
+    <span style="font-size:1.1rem">🏪</span>
+    <div style="flex:1">
+      <div class="shop-nm">${o.shopName}</div>
+      <div class="shop-ph">📞 ${o.shopPhone} — 📌 ${o.shopArea}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+      ${hasLoc?`<a href="${mapsLink}" target="_blank" style="display:flex;align-items:center;gap:3px;background:rgba(0,136,204,.1);border:1px solid rgba(0,136,204,.25);color:#0088CC;border-radius:7px;padding:4px 8px;font-size:.7rem;font-weight:800;text-decoration:none;">📍 موقع المحل</a>`:''}
+      <a href="${wa}" target="_blank" style="display:flex;align-items:center;gap:3px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25D366;border-radius:7px;padding:4px 8px;font-size:.7rem;font-weight:800;text-decoration:none;">💬 واتساب</a>
+    </div>
   </div>`;
 }
 
-async function sendOrder(){
-  const area=v('fArea'),addr=v('fAddr'),price=v('fPrice'),custName=v('fName'),custPhone=v('fPhone'),note=v('fNote');
-  if(!area||!addr||!price||+price<=0||!custName||!custPhone||custPhone.length<10){toast('⚠️ أكمل الحقول','#F57C00');return;}
-  const btn=document.getElementById('sendBtn');btn.disabled=true;btn.textContent='⏳ جاري...';
-  // سعر التوصيل من الشيت
-  const found=deliveryPrices.find(p=>String(p.area).trim()===area);
-  const deliveryPrice=found?found.price:'';
-  // موقع المحل من بيانات المحل المحفوظة
-  const shopLat=shop.lat||'';
-  const shopLng=shop.lng||'';
-  const r=await api({action:'sendOrder',shopId:shop.id,shopName:shop.name,shopPhone:shop.phone,shopArea:shop.area,area,addr,price,custName,custPhone,note,deliveryPrice,shopLat,shopLng});
-  btn.disabled=false;btn.innerHTML='🛵 إرسال للمندوبين';
-  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
-  ['fArea','fPrice','fAddr','fName','fPhone','fNote'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.value='';
-  });
-  document.getElementById('deliveryPriceBox').style.display='none';
-  toast('📡 تم الإرسال — إشعار تلغرام للمندوبين','#F57C00');
+function buildMine(o){
+  return`<div class="ocard mine-conf">
+    <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf">🛵 في الطريق</span><span class="ctime">${ago(o.ts)}</span></div>
+    ${shopRow(o)}
+    <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
+    <div class="cmeta">
+      <div>
+        <div class="cprice">${fmt(o.price)} د.ع</div>
+        ${o.deliveryPrice?`<div style="font-size:.72rem;color:var(--green);font-weight:700;">توصيل: ${fmt(o.deliveryPrice)} د.ع</div>`:''}
+      </div>
+      <div class="ccust">👤 ${o.custName} — ${o.custPhone}</div>
+    </div>
+    ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
+    <button class="btn-delivered" onclick="markDone('${o.id}')">✅ تم التسليم</button>
+  </div>`;
+}
+
+function buildAvail(o){
+  return`<div class="ocard available">
+    <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-avail">🆕 متاح</span><span class="ctime">${ago(o.ts)}</span></div>
+    ${shopRow(o)}
+    <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
+    ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
+    <div class="cmeta">
+      <div>
+        <div class="cprice">${fmt(o.price)} د.ع</div>
+        ${o.deliveryPrice?`<div style="font-size:.72rem;color:var(--green);font-weight:700;">توصيل: ${fmt(o.deliveryPrice)} د.ع</div>`:''}
+      </div>
+      <div class="ccust">👤 ${o.custName}</div>
+    </div>
+    <button class="btn-accept" onclick="accept('${o.id}')">⚡ قبول الطلب</button>
+  </div>`;
+}
+
+async function accept(id){
+  // أخذ الموقع
+  let drvLat=null,drvLng=null;
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
+    drvLat=pos.coords.latitude;drvLng=pos.coords.longitude;
+  }catch(e){}
+  const r=await api({action:'acceptOrder',orderId:id,drvId:me.id,drvName:me.name,drvPhone:me.phone,drvLat,drvLng});
+  if(r.ok)toast('✅ قبلت الطلب — في الطريق!','#00A846');
+  else toast('⚠️ '+r.error,'#E53935');
   loadOrders();
 }
 
-async function cancelOrder(id){
-  if(!confirm('إلغاء هذا الطلب؟'))return;
-  await api({action:'cancelOrder',orderId:id});
-  toast('✕ تم الإلغاء','#E53935');loadOrders();
+async function markDone(id){
+  await api({action:'deliverOrder',orderId:id});
+  toast('🎉 تم التسليم بنجاح!','#00A846');
+  loadOrders();
 }
 
-function v(id){return document.getElementById(id)?.value||'';}
 function fmt(n){return Number(n).toLocaleString('ar-IQ');}
 function ago(ts){const m=Math.floor((Date.now()-new Date(ts))/60000);return m<1?'الآن':m<60?`${m} دق`:m<1440?`${Math.floor(m/60)} س`:`${Math.floor(m/1440)} يوم`;}
 let tt=null;
-function toast(msg,bg,color){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bg||'#F57C00';t.style.color=color||'#fff';t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200);}
-function beep(){try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();[520,660,800].forEach((f,i)=>{const o=aCtx.createOscillator(),g=aCtx.createGain();o.connect(g);g.connect(aCtx.destination);o.frequency.value=f;const t=aCtx.currentTime+i*.14;g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.25);});}catch(e){}}
-document.addEventListener('click',()=>{try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}},{once:true});
+function toast(msg,bg,color){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bg||'#00A846';t.style.color=color||'#fff';t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
 
 (function(){
-  const s=localStorage.getItem('amwaj_shop');
-  if(s)enterApp(JSON.parse(s));
-  else document.getElementById('authWrap').style.display='flex';
+  const s=localStorage.getItem('me_drv');
+  if(s){me=JSON.parse(s);openApp();}
+  else document.getElementById('loginWrap').style.display='flex';
   document.getElementById('loadingOverlay').style.display='none';
+  if('Notification'in window)Notification.requestPermission();
 })();
 </script>
 </body>
