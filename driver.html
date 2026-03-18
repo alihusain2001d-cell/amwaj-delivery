@@ -62,10 +62,22 @@ input:focus{border-color:var(--cyan);}
 <div id="loginWrap" style="display:none">
   <div class="lcard">
     <h2>🛵 لوحة المندوب</h2>
-    <p>سجّل دخولك لاستقبال الطلبات</p>
-    <input type="text" id="lname" placeholder="اسمك الكريم"/>
-    <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
-    <button class="btn-login" onclick="doLogin()">🚀 دخول</button>
+    <p>اختر طريقة الدخول</p>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #0088CC;background:rgba(0,136,204,.08);color:#0088CC;">دخول</button>
+      <button id="tabReg" onclick="switchTab('reg')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #D1D5DB;background:#F8FAFC;color:#6B7280;">تسجيل جديد</button>
+    </div>
+    <!-- دخول -->
+    <div id="formLogin">
+      <input type="tel" id="lphone2" placeholder="07xxxxxxxxx — رقمك المسجل" maxlength="11"/>
+      <button class="btn-login" onclick="doLoginExist()">🔑 دخول</button>
+    </div>
+    <!-- تسجيل جديد -->
+    <div id="formReg" style="display:none">
+      <input type="text" id="lname" placeholder="اسمك الكريم"/>
+      <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
+      <button class="btn-login" onclick="doLogin()">🚀 تسجيل ودخول</button>
+    </div>
   </div>
 </div>
 <div id="app">
@@ -117,6 +129,31 @@ function beep(){
       o.start(t);o.stop(t+.22);
     });
   }catch(e){}
+}
+
+function switchTab(t){
+  document.getElementById('tabLogin').style.borderColor=t==='login'?'#0088CC':'#D1D5DB';
+  document.getElementById('tabLogin').style.color=t==='login'?'#0088CC':'#6B7280';
+  document.getElementById('tabLogin').style.background=t==='login'?'rgba(0,136,204,.08)':'#F8FAFC';
+  document.getElementById('tabReg').style.borderColor=t==='reg'?'#0088CC':'#D1D5DB';
+  document.getElementById('tabReg').style.color=t==='reg'?'#0088CC':'#6B7280';
+  document.getElementById('tabReg').style.background=t==='reg'?'rgba(0,136,204,.08)':'#F8FAFC';
+  document.getElementById('formLogin').style.display=t==='login'?'block':'none';
+  document.getElementById('formReg').style.display=t==='reg'?'block':'none';
+}
+
+async function doLoginExist(){
+  const phone=document.getElementById('lphone2').value.trim();
+  if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
+  const r=await api({action:'getOrders',shopId:'ALL'});
+  // نجيب بيانات المندوب من الشيت
+  const r2=await api({action:'registerDriver',name:'',phone});
+  if(!r2.ok){toast('❌ '+r2.error,'#E53935');return;}
+  const drv=r2.driver;
+  if(!drv.name){toast('❌ رقمك غير مسجل — سجّل أولاً','#E53935');return;}
+  me={id:drv.id,name:drv.name,phone:drv.phone};
+  localStorage.setItem('me_drv',JSON.stringify(me));
+  openApp();
 }
 
 async function doLogin(){
