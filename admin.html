@@ -124,7 +124,7 @@ const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX
 let shop=null,curtab=1,pollTimer=null,lastConf=-1,aCtx=null;
 
 async function api(data){
-  const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data)});
+  const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data),redirect:'follow'});
   return r.json();
 }
 
