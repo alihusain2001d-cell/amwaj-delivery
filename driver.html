@@ -94,13 +94,39 @@ input:focus{border-color:var(--cyan);}
       <div class="sbox"><div class="sval" id="stM">0</div><div class="slbl">طلباتي</div></div>
       <div class="sbox"><div class="sval" id="stD">0</div><div class="slbl">منجزة</div></div>
     </div>
-    <div id="mineSec" style="display:none">
-      <div class="sec-hd">🛵 طلباتي النشطة</div>
-      <div id="mineList"></div>
+    <!-- تبويبات -->
+    <div style="display:flex;background:#fff;border-radius:12px;margin-bottom:13px;overflow:hidden;border:1px solid #E5E7EB;">
+      <div id="dTab1" onclick="dGoTab(1)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid var(--cyan);color:var(--cyan);">📦 الطلبات</div>
+      <div id="dTab2" onclick="dGoTab(2)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--muted);">✅ المنجزة</div>
     </div>
-    <div>
-      <div class="sec-hd">📦 الطلبات المتاحة <span class="pill" id="availPill" style="display:none">0</span></div>
-      <div id="availList"></div>
+    <div id="dTc1">
+      <div id="mineSec" style="display:none">
+        <div class="sec-hd">🛵 طلباتي النشطة</div>
+        <div id="mineList"></div>
+      </div>
+      <div>
+        <div class="sec-hd">📦 الطلبات المتاحة <span class="pill" id="availPill" style="display:none">0</span></div>
+        <div id="availList"></div>
+      </div>
+    </div>
+    <div id="dTc2" style="display:none">
+      <!-- فلتر التاريخ -->
+      <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:13px;margin-bottom:12px;">
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:7px;">📅 اختر التاريخ</div>
+        <input type="date" id="dateFilter" style="margin-bottom:8px;" onchange="filterDone()"/>
+        <div style="display:flex;gap:7px;">
+          <button onclick="setToday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid var(--cyan);background:rgba(0,136,204,.08);color:var(--cyan);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">اليوم</button>
+          <button onclick="setYesterday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">أمس</button>
+          <button onclick="clearDate()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">الكل</button>
+        </div>
+      </div>
+      <!-- الإجمالي -->
+      <div id="doneTotal" style="display:none;background:linear-gradient(135deg,var(--green),#007A33);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center;color:#fff;">
+        <div style="font-size:.75rem;opacity:.85;margin-bottom:4px;">إجمالي التوصيل</div>
+        <div id="doneTotalVal" style="font-size:1.6rem;font-weight:900;">0 د.ع</div>
+        <div id="doneTotalCount" style="font-size:.75rem;opacity:.85;margin-top:3px;">0 طلب</div>
+      </div>
+      <div id="doneList"></div>
     </div>
   </div>
 </div>
@@ -182,6 +208,63 @@ function openApp(){
   startPoll();
 }
 
+let dCurTab=1, allDoneOrders=[];
+
+function dGoTab(n){
+  dCurTab=n;
+  [1,2].forEach(i=>{
+    const t=document.getElementById('dTab'+i);
+    t.style.borderBottom=i===n?'2.5px solid var(--cyan)':'2.5px solid transparent';
+    t.style.color=i===n?'var(--cyan)':'var(--muted)';
+    document.getElementById('dTc'+i).style.display=i===n?'block':'none';
+  });
+  if(n===2)filterDone();
+}
+
+function setToday(){
+  const d=new Date();
+  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
+  filterDone();
+}
+function setYesterday(){
+  const d=new Date();d.setDate(d.getDate()-1);
+  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
+  filterDone();
+}
+function clearDate(){
+  document.getElementById('dateFilter').value='';
+  filterDone();
+}
+
+function filterDone(){
+  const dateVal=document.getElementById('dateFilter').value;
+  let filtered=allDoneOrders;
+  if(dateVal){
+    filtered=allDoneOrders.filter(o=>{
+      const d=new Date(o.ts);
+      const dStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      return dStr===dateVal;
+    });
+  }
+  const total=filtered.reduce((s,o)=>s+Number(o.price||0),0);
+  const totalEl=document.getElementById('doneTotal');
+  if(filtered.length){
+    totalEl.style.display='block';
+    document.getElementById('doneTotalVal').textContent=total.toLocaleString('ar-IQ')+' د.ع';
+    document.getElementById('doneTotalCount').textContent=filtered.length+' طلب';
+  }else{
+    totalEl.style.display='none';
+  }
+  const el=document.getElementById('doneList');
+  if(!filtered.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات</p></div>`;return;}
+  el.innerHTML=filtered.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>`
+    <div class="ocard mine-conf" style="border-color:rgba(0,168,70,.3);">
+      <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf" style="background:rgba(0,168,70,.12);color:var(--green);">✅ مسلّم</span><span class="ctime">${ago(o.ts)}</span></div>
+      <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📌 ${o.shopArea}</div></div></div>
+      <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div style="font-size:.77rem;color:var(--muted);">📍 ${o.area}</div></div>
+    </div>`).join('');
+}
+
 function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,4000);}
 
 async function loadOrders(){
@@ -190,12 +273,13 @@ async function loadOrders(){
   if(!r.ok)return;
   const all=r.orders||[];
   const avail=all.filter(o=>o.status==='sent');
-  const mine=all.filter(o=>o.drvId===me.id&&!['delivered','cancelled'].includes(o.status));
-  const done=all.filter(o=>o.drvId===me.id&&o.status==='delivered').length;
+  const mine=all.filter(o=>String(o.drvId)===String(me.id)&&!['delivered','cancelled'].includes(o.status));
+  const done=all.filter(o=>String(o.drvId)===String(me.id)&&o.status==='delivered');
+  allDoneOrders=done;
 
   document.getElementById('stA').textContent=avail.length;
   document.getElementById('stM').textContent=mine.length;
-  document.getElementById('stD').textContent=done;
+  document.getElementById('stD').textContent=done.length;
 
   if(prevAvail>=0&&avail.length>prevAvail){
     beep();toast('🔔 طلب جديد — كن الأول!','#F57C00');
@@ -213,6 +297,8 @@ async function loadOrders(){
 
   const availList=document.getElementById('availList');
   availList.innerHTML=avail.length?avail.map(buildAvail).join(''):`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات الآن</p></div>`;
+
+  if(dCurTab===2)filterDone();
 }
 
 function buildMine(o){
