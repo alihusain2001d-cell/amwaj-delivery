@@ -1,359 +1,257 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أمواج — المندوب</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--cyan:#0088CC;--bg:#F0F4F8;--card:#FFFFFF;--card2:#E8EFF5;--green:#00A846;--red:#E53935;--orange:#F57C00;--gold:#F9A825;--text:#1A1A2E;--muted:#6B7280;}
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-#loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.lcard{background:var(--card);border:1px solid #E5E7EB;border-radius:22px;padding:36px 28px;width:100%;max-width:390px;box-shadow:0 8px 24px rgba(0,0,0,.1);}
-.lcard h2{text-align:center;font-size:1.5rem;font-weight:900;color:var(--cyan);margin-bottom:6px;}
-.lcard p{text-align:center;color:var(--muted);margin-bottom:24px;font-size:.84rem;}
-input[type="text"],input[type="tel"]{width:100%;background:#F8FAFC;border:1.5px solid #D1D5DB;border-radius:11px;padding:12px 15px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.93rem;margin-bottom:12px;outline:none;transition:all .25s;direction:rtl;}
-input:focus{border-color:var(--cyan);}
-.btn-login{width:100%;background:linear-gradient(135deg,var(--cyan),#005F8F);color:#fff;border:none;border-radius:13px;padding:15px;font-size:1rem;font-weight:900;font-family:'Cairo',sans-serif;cursor:pointer;}
-#app{display:none;}
-.topbar{background:var(--card);border-bottom:1px solid #E5E7EB;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.drv-name-top{font-weight:900;font-size:.9rem;}
-.drv-sub{font-size:.68rem;color:var(--green);}
-.exit-btn{background:none;border:1px solid #D1D5DB;color:var(--muted);border-radius:8px;padding:5px 11px;font-family:'Cairo',sans-serif;font-size:.74rem;cursor:pointer;}
-.wrap{max-width:460px;margin:0 auto;padding:13px;}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px;}
-.sbox{background:var(--card);border:1px solid #E5E7EB;border-radius:12px;padding:12px 6px;text-align:center;}
-.sval{font-size:1.35rem;font-weight:900;color:var(--cyan);}
-.slbl{font-size:.64rem;color:var(--muted);margin-top:2px;}
-.sec-hd{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;}
-.pill{background:var(--red);color:#fff;border-radius:20px;padding:1px 7px;font-size:.64rem;font-weight:900;}
-.ocard{background:var(--card);border:1px solid #E5E7EB;border-radius:15px;padding:15px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-.ocard.available{border-color:rgba(245,124,0,.5);box-shadow:0 0 16px rgba(245,124,0,.1);}
-.ocard.mine-conf{border-color:rgba(0,168,70,.45);}
-.ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:4px;}
-.cid{color:var(--cyan);font-weight:800;font-size:.82rem;}
-.ctime{color:var(--muted);font-size:.67rem;}
-.chip{padding:3px 10px;border-radius:20px;font-size:.67rem;font-weight:800;}
-.ch-avail{background:rgba(245,124,0,.12);color:var(--orange);}
-.ch-conf{background:rgba(0,168,70,.12);color:var(--green);}
-.shop-row{display:flex;align-items:center;gap:9px;background:#F5F3FF;border:1px solid rgba(123,31,162,.15);border-radius:11px;padding:9px 12px;margin-bottom:9px;}
-.shop-nm{font-weight:900;font-size:.85rem;color:#7B1FA2;}
-.shop-ph{font-size:.72rem;color:var(--muted);}
-.carea{font-size:.97rem;font-weight:900;margin-bottom:2px;}
-.caddr{font-size:.78rem;color:var(--muted);margin-bottom:7px;}
-.cmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
-.cprice{font-size:1.1rem;font-weight:900;color:var(--gold);}
-.ccust{font-size:.77rem;color:var(--muted);}
-.cnote{font-size:.76rem;color:var(--muted);margin-bottom:9px;background:#F9FAFB;border-radius:8px;padding:7px 10px;border:1px solid #E5E7EB;}
-.btn-accept{width:100%;background:linear-gradient(135deg,var(--green),#007A33);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;}
-.btn-delivered{width:100%;background:linear-gradient(135deg,var(--cyan),#005F8F);color:#fff;border:none;border-radius:12px;padding:12px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-top:6px;}
-#loadingOverlay{position:fixed;inset:0;background:#F0F4F8;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px;}
-.spinner{width:44px;height:44px;border:3px solid rgba(0,136,204,.15);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.15);}
-.toast.on{transform:translateX(-50%) translateY(0);}
-.empty{text-align:center;padding:40px 16px;color:var(--muted);}
-.empty-ico{font-size:46px;opacity:.3;margin-bottom:10px;}
-</style>
-</head>
-<body>
-<div id="loadingOverlay"><div class="spinner"></div><p style="color:var(--muted);font-size:.85rem">جاري التحميل...</p></div>
-<div id="loginWrap" style="display:none">
-  <div class="lcard">
-    <h2>🛵 لوحة المندوب</h2>
-    <p>اختر طريقة الدخول</p>
-    <div style="display:flex;gap:8px;margin-bottom:18px">
-      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #0088CC;background:rgba(0,136,204,.08);color:#0088CC;">دخول</button>
-      <button id="tabReg" onclick="switchTab('reg')" style="flex:1;padding:9px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #D1D5DB;background:#F8FAFC;color:#6B7280;">تسجيل جديد</button>
-    </div>
-    <!-- دخول -->
-    <div id="formLogin">
-      <input type="tel" id="lphone2" placeholder="07xxxxxxxxx — رقمك المسجل" maxlength="11"/>
-      <button class="btn-login" onclick="doLoginExist()">🔑 دخول</button>
-    </div>
-    <!-- تسجيل جديد -->
-    <div id="formReg" style="display:none">
-      <input type="text" id="lname" placeholder="اسمك الكريم"/>
-      <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
-      <button class="btn-login" onclick="doLogin()">🚀 تسجيل ودخول</button>
-    </div>
-  </div>
-</div>
-<div id="app">
-  <div class="topbar">
-    <div>
-      <div class="drv-name-top" id="topName">--</div>
-      <div class="drv-sub">● متصل</div>
-    </div>
-    <button class="exit-btn" onclick="doLogout()">خروج</button>
-  </div>
-  <div class="wrap">
-    <div class="stats">
-      <div class="sbox"><div class="sval" id="stA">0</div><div class="slbl">متاحة</div></div>
-      <div class="sbox"><div class="sval" id="stM">0</div><div class="slbl">طلباتي</div></div>
-      <div class="sbox"><div class="sval" id="stD">0</div><div class="slbl">منجزة</div></div>
-    </div>
-    <!-- تبويبات -->
-    <div style="display:flex;background:#fff;border-radius:12px;margin-bottom:13px;overflow:hidden;border:1px solid #E5E7EB;">
-      <div id="dTab1" onclick="dGoTab(1)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid var(--cyan);color:var(--cyan);">📦 الطلبات</div>
-      <div id="dTab2" onclick="dGoTab(2)" style="flex:1;padding:10px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--muted);">✅ المنجزة</div>
-    </div>
-    <div id="dTc1">
-      <div id="mineSec" style="display:none">
-        <div class="sec-hd">🛵 طلباتي النشطة</div>
-        <div id="mineList"></div>
-      </div>
-      <div>
-        <div class="sec-hd">📦 الطلبات المتاحة <span class="pill" id="availPill" style="display:none">0</span></div>
-        <div id="availList"></div>
-      </div>
-    </div>
-    <div id="dTc2" style="display:none">
-      <!-- فلتر التاريخ -->
-      <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:13px;margin-bottom:12px;">
-        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:7px;">📅 اختر التاريخ</div>
-        <input type="date" id="dateFilter" style="margin-bottom:8px;" onchange="filterDone()"/>
-        <div style="display:flex;gap:7px;">
-          <button onclick="setToday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid var(--cyan);background:rgba(0,136,204,.08);color:var(--cyan);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">اليوم</button>
-          <button onclick="setYesterday()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">أمس</button>
-          <button onclick="clearDate()" style="flex:1;padding:8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#F8FAFC;color:var(--muted);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">الكل</button>
-        </div>
-      </div>
-      <!-- الإجمالي -->
-      <div id="doneTotal" style="display:none;background:linear-gradient(135deg,var(--green),#007A33);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center;color:#fff;">
-        <div style="font-size:.75rem;opacity:.85;margin-bottom:4px;">إجمالي التوصيل</div>
-        <div id="doneTotalVal" style="font-size:1.6rem;font-weight:900;">0 د.ع</div>
-        <div id="doneTotalCount" style="font-size:.75rem;opacity:.85;margin-top:3px;">0 طلب</div>
-      </div>
-      <div id="doneList"></div>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX3GMC5ocvwMQ3VZnD564Bom4Otz3S0j6WUEGZ-q/exec';
-let me=null,pollTimer=null,prevAvail=-1,aCtx=null;
+var CONFIG = {
+  BOT_TOKEN:  '8602301366:AAGjrZyvJiLhVO2J3gEe2r9zSOAoQOfMOkQ',
+  CHANNEL_ID: '-1003848688804',
+  SUPER_PASS: 'super2024',
+  DRIVER_URL: 'https://amwaj-delivery.vercel.app/driver.html'
+};
 
-async function api(data){
-  const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data),redirect:'follow'});
-  return r.json();
+function doGet(e) {
+  return HtmlService.createHtmlOutput('Amwaj API OK');
 }
 
-document.addEventListener('touchstart',unlockAudio,{once:true});
-document.addEventListener('click',unlockAudio,{once:true});
-function unlockAudio(){try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
-function beep(){
-  try{
-    if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();
-    if(aCtx.state==='suspended')aCtx.resume();
-    [440,550,660,550,440].forEach((f,i)=>{
-      const o=aCtx.createOscillator(),g=aCtx.createGain();
-      o.connect(g);g.connect(aCtx.destination);o.frequency.value=f;o.type='sine';
-      const t=aCtx.currentTime+i*.12;
-      g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);
-      o.start(t);o.stop(t+.22);
-    });
-  }catch(e){}
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var action = data.action;
+    var result;
+    if(action === 'registerShop')    result = registerShop(data);
+    else if(action === 'loginShop')  result = loginShop(data);
+    else if(action === 'sendOrder')  result = sendOrder(data);
+    else if(action === 'acceptOrder') result = acceptOrder(data);
+    else if(action === 'deliverOrder') result = deliverOrder(data);
+    else if(action === 'cancelOrder') result = cancelOrder(data);
+    else if(action === 'getOrders')  result = getOrders(data);
+    else if(action === 'getDeliveryPrices') result = getDeliveryPrices(data);
+    else if(action === 'updateShopLocation') result = updateShopLocation(data);
+    else if(action === 'registerDriver') result = registerDriver(data);
+    else if(action === 'superLogin') result = superLogin(data);
+    else if(action === 'getAllOrders') result = getAllOrders(data);
+    else if(action === 'superCancel') result = superCancel(data);
+    else result = {ok: false, error: 'Unknown action'};
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok: false, error: err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-function switchTab(t){
-  document.getElementById('tabLogin').style.borderColor=t==='login'?'#0088CC':'#D1D5DB';
-  document.getElementById('tabLogin').style.color=t==='login'?'#0088CC':'#6B7280';
-  document.getElementById('tabLogin').style.background=t==='login'?'rgba(0,136,204,.08)':'#F8FAFC';
-  document.getElementById('tabReg').style.borderColor=t==='reg'?'#0088CC':'#D1D5DB';
-  document.getElementById('tabReg').style.color=t==='reg'?'#0088CC':'#6B7280';
-  document.getElementById('tabReg').style.background=t==='reg'?'rgba(0,136,204,.08)':'#F8FAFC';
-  document.getElementById('formLogin').style.display=t==='login'?'block':'none';
-  document.getElementById('formReg').style.display=t==='reg'?'block':'none';
+function getSheet(name) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  for(var i = 0; i < sheets.length; i++) {
+    if(sheets[i].getName().trim() === name.trim()) return sheets[i];
+  }
+  return null;
 }
 
-async function doLoginExist(){
-  let phone=document.getElementById('lphone2').value.trim();
-  phone=phone.replace(/^0/,'');
-  if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
-  const r2=await api({action:'registerDriver',name:'',phone});
-  if(!r2.ok){toast('❌ '+r2.error,'#E53935');return;}
-  const drv=r2.driver;
-  if(!drv.name){toast('❌ رقمك غير مسجل — سجّل أولاً','#E53935');return;}
-  me={id:drv.id,name:drv.name,phone:drv.phone};
-  localStorage.setItem('me_drv',JSON.stringify(me));
-  openApp();
-}
-
-async function doLogin(){
-  const name=document.getElementById('lname').value.trim();
-  let phone=document.getElementById('lphone').value.trim();
-  phone=phone.replace(/^0/,'');
-  if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
-  if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
-  const r=await api({action:'registerDriver',name,phone});
-  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
-  me={id:r.driver.id||'drv_'+phone,name,phone};
-  localStorage.setItem('me_drv',JSON.stringify(me));
-  openApp();
-}
-
-function doLogout(){
-  clearInterval(pollTimer);me=null;
-  localStorage.removeItem('me_drv');
-  document.getElementById('loginWrap').style.display='flex';
-  document.getElementById('app').style.display='none';
-}
-
-function openApp(){
-  document.getElementById('loginWrap').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('topName').textContent=me.name;
-  startPoll();
-}
-
-let dCurTab=1, allDoneOrders=[];
-
-function dGoTab(n){
-  dCurTab=n;
-  [1,2].forEach(i=>{
-    const t=document.getElementById('dTab'+i);
-    t.style.borderBottom=i===n?'2.5px solid var(--cyan)':'2.5px solid transparent';
-    t.style.color=i===n?'var(--cyan)':'var(--muted)';
-    document.getElementById('dTc'+i).style.display=i===n?'block':'none';
+function sheetToObjects(sheet) {
+  var data = sheet.getDataRange().getValues();
+  if(data.length < 2) return [];
+  var headers = data[0];
+  return data.slice(1).map(function(row) {
+    var obj = {};
+    headers.forEach(function(h, i) { obj[String(h)] = row[i]; });
+    return obj;
   });
-  if(n===2)filterDone();
 }
 
-function setToday(){
-  const d=new Date();
-  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
-  filterDone();
-}
-function setYesterday(){
-  const d=new Date();d.setDate(d.getDate()-1);
-  document.getElementById('dateFilter').value=d.toISOString().split('T')[0];
-  filterDone();
-}
-function clearDate(){
-  document.getElementById('dateFilter').value='';
-  filterDone();
-}
-
-function filterDone(){
-  const dateVal=document.getElementById('dateFilter').value;
-  let filtered=allDoneOrders;
-  if(dateVal){
-    filtered=allDoneOrders.filter(o=>{
-      const d=new Date(o.ts);
-      const dStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      return dStr===dateVal;
-    });
+function findRow(sheet, colName, value) {
+  var data = sheet.getDataRange().getValues();
+  if(data.length < 2) return -1;
+  var headers = data[0];
+  var colIdx = headers.indexOf(colName);
+  if(colIdx === -1) return -1;
+  for(var i = 1; i < data.length; i++) {
+    if(String(data[i][colIdx]) === String(value)) return i + 1;
   }
-  const total=filtered.reduce((s,o)=>s+Number(o.price||0),0);
-  const totalEl=document.getElementById('doneTotal');
-  if(filtered.length){
-    totalEl.style.display='block';
-    document.getElementById('doneTotalVal').textContent=total.toLocaleString('ar-IQ')+' د.ع';
-    document.getElementById('doneTotalCount').textContent=filtered.length+' طلب';
-  }else{
-    totalEl.style.display='none';
+  return -1;
+}
+
+function updateRow(sheet, rowNum, colName, value) {
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var colIdx = headers.indexOf(colName);
+  if(colIdx === -1) return;
+  sheet.getRange(rowNum, colIdx + 1).setValue(value);
+}
+
+function makeId() {
+  return 'ORD-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+}
+
+function nowStr() {
+  return new Date().toISOString();
+}
+
+// ═══ المحلات ═══
+function registerShop(data) {
+  var sheet = getSheet('المحلات');
+  var shops = sheetToObjects(sheet);
+  if(shops.find(function(s){ return String(s.phone) === String(data.phone); }))
+    return {ok: false, error: 'هذا الرقم مسجل مسبقاً'};
+  var id = 'shop_' + Date.now();
+  sheet.appendRow([id, data.name, data.phone, data.area, data.pass, data.lat||'', data.lng||'']);
+  return {ok: true, shop: {id: id, name: data.name, phone: data.phone, area: data.area}};
+}
+
+function loginShop(data) {
+  var shops = sheetToObjects(getSheet('المحلات'));
+  var shop = shops.find(function(s){ return String(s.phone) === String(data.phone) && String(s.pass) === String(data.pass); });
+  if(!shop) return {ok: false, error: 'رقم أو كلمة مرور خاطئة'};
+  return {ok: true, shop: shop};
+}
+
+// ═══ المندوبين ═══
+function registerDriver(data) {
+  var sheet = getSheet('المندوبين');
+  var drivers = sheetToObjects(sheet);
+  var existing = drivers.find(function(d){ return String(d.phone) === String(data.phone); });
+  if(existing) {
+    var row = findRow(sheet, 'phone', data.phone);
+    updateRow(sheet, row, 'online', true);
+    updateRow(sheet, row, 'ts', nowStr());
+    if(data.name) updateRow(sheet, row, 'name', data.name);
+    return {ok: true, driver: {id: existing.id, name: data.name||String(existing.name), phone: String(existing.phone)}};
   }
-  const el=document.getElementById('doneList');
-  if(!filtered.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات</p></div>`;return;}
-  el.innerHTML=filtered.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>`
-    <div class="ocard mine-conf" style="border-color:rgba(0,168,70,.3);">
-      <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf" style="background:rgba(0,168,70,.12);color:var(--green);">✅ مسلّم</span><span class="ctime">${ago(o.ts)}</span></div>
-      <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📌 ${o.shopArea}</div></div></div>
-      <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div style="font-size:.77rem;color:var(--muted);">📍 ${o.area}</div></div>
-    </div>`).join('');
+  var id = 'drv_' + data.phone;
+  sheet.appendRow([id, data.name, data.phone, true, nowStr()]);
+  return {ok: true, driver: {id: id, name: data.name, phone: data.phone}};
 }
 
-function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,4000);}
+// ═══ الطلبات ═══
+function sendOrder(data) {
+  var sheet = getSheet('الطلبات');
+  var id = makeId();
+  sheet.appendRow([
+    id, data.shopId, data.shopName, data.shopPhone, data.shopArea,
+    data.area, data.addr, data.price, data.custName, data.custPhone,
+    data.note||'', 'sent', '', '', '', nowStr(),
+    data.deliveryPrice||'', data.shopLat||'', data.shopLng||''
+  ]);
+  // رسالة تلغرام مع سعر التوصيل وموقع المحل
+  var shopLocLine = (data.shopLat && data.shopLng)
+    ? 'موقع المحل: https://maps.google.com/?q=' + data.shopLat + ',' + data.shopLng + '\n'
+    : '';
+  var deliveryLine = data.deliveryPrice
+    ? 'سعر التوصيل: ' + data.deliveryPrice + ' دينار\n'
+    : '';
+  var msg = 'طلب توصيل جديد\n' +
+    'المحل: ' + data.shopName + '\n' +
+    shopLocLine +
+    'المنطقة: ' + data.area + '\n' +
+    'العنوان: ' + data.addr + '\n' +
+    'سعر الطلب: ' + data.price + ' دينار\n' +
+    deliveryLine +
+    'الزبون: ' + data.custName + ' - ' + data.custPhone + '\n' +
+    (data.note ? 'ملاحظة: ' + data.note + '\n' : '') +
+    'الطلب: ' + id;
+  sendTelegram(CONFIG.CHANNEL_ID, msg, [[{text: 'اضغط لقبول الطلب', url: CONFIG.DRIVER_URL}]]);
+  return {ok: true, id: id};
+}
 
-async function loadOrders(){
-  if(!me)return;
-  const r=await api({action:'getOrders',shopId:'ALL'});
-  if(!r.ok)return;
-  const all=r.orders||[];
-  const avail=all.filter(o=>o.status==='sent');
-  const mine=all.filter(o=>String(o.drvId)===String(me.id)&&!['delivered','cancelled'].includes(o.status));
-  const done=all.filter(o=>String(o.drvId)===String(me.id)&&o.status==='delivered');
-  allDoneOrders=done;
-
-  document.getElementById('stA').textContent=avail.length;
-  document.getElementById('stM').textContent=mine.length;
-  document.getElementById('stD').textContent=done.length;
-
-  if(prevAvail>=0&&avail.length>prevAvail){
-    beep();toast('🔔 طلب جديد — كن الأول!','#F57C00');
-    if(Notification.permission==='granted')
-      new Notification('🛵 طلب جديد!',{body:'وصل طلب توصيل جديد',icon:'/icon-192.png',vibrate:[300,100,300]});
+function acceptOrder(data) {
+  var sheet = getSheet('الطلبات');
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+    var orders = sheetToObjects(sheet);
+    var order = orders.find(function(o){ return String(o.id) === String(data.orderId); });
+    if(!order) return {ok: false, error: 'الطلب غير موجود'};
+    if(String(order.status) !== 'sent') return {ok: false, error: 'سبقك مندوب آخر!'};
+    var row = findRow(sheet, 'id', data.orderId);
+    updateRow(sheet, row, 'status', 'confirmed');
+    updateRow(sheet, row, 'drvId', data.drvId);
+    updateRow(sheet, row, 'drvName', data.drvName);
+    updateRow(sheet, row, 'drvPhone', data.drvPhone);
+    if(data.drvLat) updateRow(sheet, row, 'drvLat', data.drvLat);
+    if(data.drvLng) updateRow(sheet, row, 'drvLng', data.drvLng);
+    // بدون إشعار تلغرام — يظهر في صفحة أبو المحل فقط
+    return {ok: true};
+  } finally {
+    lock.releaseLock();
   }
-  prevAvail=avail.length;
-
-  const p=document.getElementById('availPill');
-  p.style.display=avail.length?'inline-block':'none';p.textContent=avail.length;
-
-  const mineSec=document.getElementById('mineSec'),mineList=document.getElementById('mineList');
-  if(mine.length){mineSec.style.display='block';mineList.innerHTML=mine.map(buildMine).join('');}
-  else mineSec.style.display='none';
-
-  const availList=document.getElementById('availList');
-  availList.innerHTML=avail.length?avail.map(buildAvail).join(''):`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات الآن</p></div>`;
-
-  if(dCurTab===2)filterDone();
 }
 
-function buildMine(o){
-  return`<div class="ocard mine-conf">
-    <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf">🛵 في الطريق</span><span class="ctime">${ago(o.ts)}</span></div>
-    <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📞 ${o.shopPhone} — 📌 ${o.shopArea}</div></div></div>
-    <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
-    <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div class="ccust">👤 ${o.custName} — ${o.custPhone}</div></div>
-    ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
-    <button class="btn-delivered" onclick="markDone('${o.id}')">✅ تم التسليم</button>
-  </div>`;
+function deliverOrder(data) {
+  var sheet = getSheet('الطلبات');
+  var row = findRow(sheet, 'id', data.orderId);
+  if(row === -1) return {ok: false, error: 'الطلب غير موجود'};
+  updateRow(sheet, row, 'status', 'delivered');
+  return {ok: true};
 }
 
-function buildAvail(o){
-  return`<div class="ocard available">
-    <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-avail">🆕 متاح</span><span class="ctime">${ago(o.ts)}</span></div>
-    <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📞 ${o.shopPhone} — 📌 ${o.shopArea}</div></div></div>
-    <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
-    ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
-    <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div class="ccust">👤 ${o.custName} — ${o.custPhone}</div></div>
-    <button class="btn-accept" onclick="accept('${o.id}')">⚡ قبول الطلب</button>
-  </div>`;
+function cancelOrder(data) {
+  var sheet = getSheet('الطلبات');
+  var row = findRow(sheet, 'id', data.orderId);
+  if(row === -1) return {ok: false, error: 'الطلب غير موجود'};
+  updateRow(sheet, row, 'status', 'cancelled');
+  return {ok: true};
 }
 
-async function accept(id){
-  // أخذ الموقع
-  let drvLat=null,drvLng=null;
-  try{
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
-    drvLat=pos.coords.latitude;drvLng=pos.coords.longitude;
-  }catch(e){}
-  const r=await api({action:'acceptOrder',orderId:id,drvId:me.id,drvName:me.name,drvPhone:me.phone,drvLat,drvLng});
-  if(r.ok)toast('✅ قبلت الطلب — في الطريق!','#00A846');
-  else toast('⚠️ '+r.error,'#E53935');
-  loadOrders();
+function getOrders(data) {
+  var orders = sheetToObjects(getSheet('الطلبات'));
+  if(data.shopId === 'ALL') return {ok: true, orders: orders};
+  var myOrders = orders.filter(function(o){ return String(o.shopId) === String(data.shopId); });
+  return {ok: true, orders: myOrders};
 }
 
-async function markDone(id){
-  await api({action:'deliverOrder',orderId:id});
-  toast('🎉 تم التسليم بنجاح!','#00A846');
-  loadOrders();
+function updateShopLocation(data) {
+  var sheet = getSheet('المحلات');
+  var row = findRow(sheet, 'id', data.shopId);
+  if(row === -1) return {ok: false, error: 'المحل غير موجود'};
+  updateRow(sheet, row, 'lat', data.lat);
+  updateRow(sheet, row, 'lng', data.lng);
+  return {ok: true};
 }
 
-function fmt(n){return Number(n).toLocaleString('ar-IQ');}
-function ago(ts){const m=Math.floor((Date.now()-new Date(ts))/60000);return m<1?'الآن':m<60?`${m} دق`:m<1440?`${Math.floor(m/60)} س`:`${Math.floor(m/1440)} يوم`;}
-let tt=null;
-function toast(msg,bg,color){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bg||'#00A846';t.style.color=color||'#fff';t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
+function getDeliveryPrices(data) {
+  var sheet = getSheet('أسعار التوصيل');
+  if(!sheet) return {ok: true, prices: []};
+  var prices = sheetToObjects(sheet);
+  return {ok: true, prices: prices};
+}
 
-(function(){
-  const s=localStorage.getItem('me_drv');
-  if(s){me=JSON.parse(s);openApp();}
-  else document.getElementById('loginWrap').style.display='flex';
-  document.getElementById('loadingOverlay').style.display='none';
-  if('Notification'in window)Notification.requestPermission();
-})();
-</script>
-</body>
-</html>
+function getAllOrders(data) {
+  if(data.pass !== CONFIG.SUPER_PASS) return {ok: false, error: 'غير مصرح'};
+  return {
+    ok: true,
+    orders: sheetToObjects(getSheet('الطلبات')),
+    shops: sheetToObjects(getSheet('المحلات')),
+    drivers: sheetToObjects(getSheet('المندوبين'))
+  };
+}
+
+function superLogin(data) {
+  if(data.pass !== CONFIG.SUPER_PASS) return {ok: false, error: 'كلمة مرور خاطئة'};
+  return {ok: true};
+}
+
+function superCancel(data) {
+  if(data.pass !== CONFIG.SUPER_PASS) return {ok: false, error: 'غير مصرح'};
+  return cancelOrder(data);
+}
+
+// ═══ Telegram ═══
+function sendTelegram(chatId, text, buttons) {
+  var url = 'https://api.telegram.org/bot' + CONFIG.BOT_TOKEN + '/sendMessage';
+  var payload = {chat_id: chatId, text: text, disable_web_page_preview: true};
+  if(buttons) payload.reply_markup = JSON.stringify({inline_keyboard: buttons});
+  try {
+    var r = UrlFetchApp.fetch(url, {method:'post', contentType:'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true});
+    Logger.log('TG: ' + r.getContentText());
+  } catch(e) {
+    Logger.log('TG error: ' + e.message);
+  }
+}
+
+function setWebhook() {
+  var url = 'https://api.telegram.org/bot' + CONFIG.BOT_TOKEN + '/setWebhook?url=' + ScriptApp.getService().getUrl();
+  Logger.log(UrlFetchApp.fetch(url, {muteHttpExceptions: true}).getContentText());
+}
+
+function testOrder() {
+  var result = sendOrder({
+    shopId: 'test', shopName: 'امواج', shopPhone: '07700000000', shopArea: 'الكرامة',
+    area: 'العباسية', addr: 'شارع الاختبار', price: '5000',
+    custName: 'علي', custPhone: '07711111111', note: ''
+  });
+  Logger.log(JSON.stringify(result));
+}
