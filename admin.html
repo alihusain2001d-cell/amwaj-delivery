@@ -114,6 +114,24 @@ textarea{min-height:60px;resize:none;}
       <div class="sbox"><div class="sval" id="s2" style="color:var(--green)">0</div><div class="slbl">في الطريق</div></div>
       <div class="sbox"><div class="sval" id="s3" style="color:#E6A800">0</div><div class="slbl">مسلّمة اليوم</div></div>
     </div>
+    <!-- فورم الطلب ثابت هنا — ما يُعاد رسمه -->
+    <div class="order-form">
+      <div class="panel-title">➕ طلب توصيل جديد</div>
+      <div class="fg">
+        <div><span class="lbl">المنطقة</span><select id="fArea">
+          <option value="">-- اختر --</option>
+          <option>العباسية</option><option>الحر</option><option>الملتقى</option><option>العلوي</option>
+          <option>الكرامة</option><option>المرحلة</option><option>الحسينية</option><option>الروضة</option>
+          <option>باب الخان</option><option>الجديدة</option><option>طويريج</option><option>أخرى</option>
+        </select></div>
+        <div><span class="lbl">المبلغ (دينار)</span><input type="number" id="fPrice" placeholder="0"/></div>
+        <div class="s2"><span class="lbl">العنوان</span><textarea id="fAddr" placeholder="الشارع، قرب..."></textarea></div>
+        <div><span class="lbl">اسم الزبون</span><input type="text" id="fName" placeholder="الاسم"/></div>
+        <div><span class="lbl">هاتف الزبون</span><input type="tel" id="fPhone" placeholder="07xxxxxxxxx" maxlength="11"/></div>
+        <div class="s2"><span class="lbl">ملاحظة</span><input type="text" id="fNote" placeholder="اختياري..."/></div>
+      </div>
+      <button class="btn btn-orange" id="sendBtn" onclick="sendOrder()">🛵 إرسال للمندوبين</button>
+    </div>
     <div id="tc1"></div>
     <div id="tc2" style="display:none"></div>
   </div>
@@ -170,7 +188,10 @@ function doLogout(){
 
 function goTab(n){
   curtab=n;
-  [1,2].forEach(i=>{document.getElementById('t'+i).className='tab'+(i===n?' on':'');document.getElementById('tc'+i).style.display=i===n?'block':'none';});
+  [1,2].forEach(i=>{
+    document.getElementById('t'+i).className='tab'+(i===n?' on':'');
+    document.getElementById('tc'+i).style.display=i===n?'block':'none';
+  });
   loadOrders();
 }
 
@@ -188,34 +209,21 @@ async function loadOrders(){
   const conf=orders.filter(o=>o.status==='confirmed').length;
   if(lastConf>=0&&conf>lastConf){beep();toast('🛵 مندوب في الطريق!','#00A846');}
   lastConf=conf;
-  if(curtab===1)renderTab1(orders.filter(o=>!['delivered','cancelled'].includes(o.status)));
-  if(curtab===2)renderTab2(orders.filter(o=>['delivered','cancelled'].includes(o.status)));
+  // تحديث الطلبات فقط — الفورم ثابت بالـ HTML
+  if(curtab===1)renderOrders(orders.filter(o=>!['delivered','cancelled'].includes(o.status)));
+  if(curtab===2)renderDone(orders.filter(o=>['delivered','cancelled'].includes(o.status)));
 }
 
-function renderTab1(active){
-  let h=`<div class="order-form"><div class="panel-title">➕ طلب توصيل جديد</div>
-    <div class="fg">
-      <div><span class="lbl">المنطقة</span><select id="fArea"><option value="">-- اختر --</option>
-        <option>العباسية</option><option>الحر</option><option>الملتقى</option><option>العلوي</option>
-        <option>الكرامة</option><option>المرحلة</option><option>الحسينية</option><option>الروضة</option>
-        <option>باب الخان</option><option>الجديدة</option><option>طويريج</option><option>أخرى</option>
-      </select></div>
-      <div><span class="lbl">المبلغ (دينار)</span><input type="number" id="fPrice" placeholder="0"/></div>
-      <div class="s2"><span class="lbl">العنوان</span><textarea id="fAddr" placeholder="الشارع، قرب..."></textarea></div>
-      <div><span class="lbl">اسم الزبون</span><input type="text" id="fName" placeholder="الاسم"/></div>
-      <div><span class="lbl">هاتف الزبون</span><input type="tel" id="fPhone" placeholder="07xxxxxxxxx" maxlength="11"/></div>
-      <div class="s2"><span class="lbl">ملاحظة</span><input type="text" id="fNote" placeholder="اختياري..."/></div>
-    </div>
-    <button class="btn btn-orange" id="sendBtn" onclick="sendOrder()">🛵 إرسال للمندوبين</button>
-  </div>`;
-  if(!active.length)h+=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات نشطة</p></div>`;
-  else{h+=`<div class="sec-hd">الطلبات النشطة (${active.length})</div>`;active.forEach(o=>h+=buildCard(o));}
-  document.getElementById('tc1').innerHTML=h;
+function renderOrders(active){
+  const el=document.getElementById('tc1');
+  if(!active.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>لا يوجد طلبات نشطة</p></div>`;return;}
+  el.innerHTML=`<div class="sec-hd">الطلبات النشطة (${active.length})</div>`+active.map(buildCard).join('');
 }
 
-function renderTab2(done){
-  if(!done.length){document.getElementById('tc2').innerHTML=`<div class="empty"><div class="empty-ico">✅</div><p>لا يوجد منجزة</p></div>`;return;}
-  document.getElementById('tc2').innerHTML=done.map(o=>{
+function renderDone(done){
+  const el=document.getElementById('tc2');
+  if(!done.length){el.innerHTML=`<div class="empty"><div class="empty-ico">✅</div><p>لا يوجد منجزة</p></div>`;return;}
+  el.innerHTML=done.map(o=>{
     const chip=o.status==='delivered'?`<span class="chip ch-done">✅ مسلّم</span>`:`<span class="chip ch-cancel">✕ ملغي</span>`;
     return`<div class="ocard"><div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
     <div class="cbody"><div><div class="cf-val">📍 ${o.area}</div></div><div><div class="cf-val price">${fmt(o.price)} د.ع</div></div></div></div>`;
@@ -250,6 +258,11 @@ async function sendOrder(){
   const r=await api({action:'sendOrder',shopId:shop.id,shopName:shop.name,shopPhone:shop.phone,shopArea:shop.area,area,addr,price,custName,custPhone,note});
   btn.disabled=false;btn.innerHTML='🛵 إرسال للمندوبين';
   if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
+  // مسح الفورم بعد الإرسال
+  ['fArea','fPrice','fAddr','fName','fPhone','fNote'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
   toast('📡 تم الإرسال — إشعار تلغرام للمندوبين','#F57C00');
   loadOrders();
 }
