@@ -223,10 +223,22 @@ function renderOrders(active){
 function renderDone(done){
   const el=document.getElementById('tc2');
   if(!done.length){el.innerHTML=`<div class="empty"><div class="empty-ico">✅</div><p>لا يوجد منجزة</p></div>`;return;}
-  el.innerHTML=done.map(o=>{
+  el.innerHTML=done.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>{
     const chip=o.status==='delivered'?`<span class="chip ch-done">✅ مسلّم</span>`:`<span class="chip ch-cancel">✕ ملغي</span>`;
-    return`<div class="ocard"><div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
-    <div class="cbody"><div><div class="cf-val">📍 ${o.area}</div></div><div><div class="cf-val price">${fmt(o.price)} د.ع</div></div></div></div>`;
+    const drvInfo=o.drvName?`<div style="background:#F0FDF4;border:1px solid rgba(0,168,70,.2);border-radius:9px;padding:8px 11px;margin-top:8px;display:flex;align-items:center;gap:8px">
+      <span>🛵</span><div style="flex:1"><div style="font-weight:800;font-size:.85rem">${o.drvName}</div><div style="color:var(--muted);font-size:.74rem">📞 ${o.drvPhone}</div></div>
+    </div>`:'';
+    return`<div class="ocard">
+      <div class="ctop"><span class="cid">${o.id}</span>${chip}<span class="ctime">${ago(o.ts)}</span></div>
+      <div class="cbody">
+        <div><div class="cf-lbl">المنطقة</div><div class="cf-val">📍 ${o.area}</div></div>
+        <div><div class="cf-lbl">المبلغ</div><div class="cf-val price">${fmt(o.price)} د.ع</div></div>
+        <div><div class="cf-lbl">الزبون</div><div class="cf-val">👤 ${o.custName}</div></div>
+        <div><div class="cf-val">📞 ${o.custPhone}</div></div>
+        <div class="cf-s2"><div class="cf-val" style="font-size:.8rem">🗺 ${o.addr}</div></div>
+        ${o.note?`<div class="cf-s2"><div class="cf-val" style="font-size:.8rem">📝 ${o.note}</div></div>`:''}
+      </div>${drvInfo}
+    </div>`;
   }).join('');
 }
 
@@ -234,7 +246,7 @@ function buildCard(o){
   const chip=o.status==='sent'?`<span class="chip ch-sent">📡 ينتظر</span>`:`<span class="chip ch-conf">🛵 في الطريق</span>`;
   let drv='';
   if(o.drvName&&o.status==='confirmed'){
-    const wa=`https://wa.me/964${(o.drvPhone||'').replace(/^0/,'')}?text=${encodeURIComponent('مرحباً '+o.drvName+' — طلب '+o.id)}`;
+    const wa=`https://wa.me/964${String(o.drvPhone||'').replace(/^0/,'')}?text=${encodeURIComponent('مرحباً '+o.drvName+' — طلب '+o.id)}`;
     const hasLoc=o.drvLat&&o.drvLng&&String(o.drvLat)!==''&&String(o.drvLng)!=='';
     const mapsLink=hasLoc?`https://maps.google.com/?q=${o.drvLat},${o.drvLng}`:'';
     drv=`<div class="drv-row">
