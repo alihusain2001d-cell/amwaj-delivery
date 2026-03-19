@@ -268,7 +268,13 @@ function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,5000);}
 async function loadOrders(){
   if(!shop)return;
   const r=await api({action:'getOrders',shopId:shop.id});
-  if(!r.ok)return;
+  if(!r.ok){
+    // إذا المحل محذوف — اطرده
+    if(r.error&&r.error.includes('محذوف')){doLogout();return;}
+    return;
+  }
+  // تحقق إضافي — هل المحل لا يزال موجوداً
+  if(r.deleted){doLogout();return;}
   const orders=r.orders||[];
   const today=new Date().toDateString();
   document.getElementById('s1').textContent=orders.filter(o=>o.status==='sent').length;
