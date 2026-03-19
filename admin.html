@@ -63,7 +63,7 @@ textarea{min-height:60px;resize:none;}
 .wa-btn{display:flex;align-items:center;gap:4px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25D366;border-radius:8px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;}
 .cactions{display:flex;gap:7px;}
 .cactions .btn{padding:10px 8px;font-size:.8rem;}
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.2);}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.2);}
 .toast.on{transform:translateX(-50%) translateY(0);}
 #loadingOverlay{position:fixed;inset:0;background:#F0F4F8;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px;}
 .spinner{width:44px;height:44px;border:3px solid rgba(245,124,0,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;}
@@ -163,7 +163,14 @@ async function doLogin(){
   const phone=v('lPhone').replace(/^0/,''),pass=v('lPass');
   if(!phone||!pass){toast('⚠️ أكمل البيانات','#F57C00');return;}
   const r=await api({action:'loginShop',phone,pass});
-  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
+  if(!r.ok){
+    if(r.error==='not_registered'){
+      toast('❌ رقمك غير مسجل — سجّل حساباً جديداً','#E53935');
+      showAuthTab('register');
+      return;
+    }
+    toast('❌ '+r.error,'#E53935');return;
+  }
   enterApp(r.shop);
 }
 
