@@ -76,6 +76,18 @@ input:focus{border-color:var(--cyan);}
     <div id="formReg" style="display:none">
       <input type="text" id="lname" placeholder="اسمك الكريم"/>
       <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
+      <!-- صورة المندوب -->
+      <div style="margin-bottom:12px;">
+        <div style="font-size:.72rem;font-weight:700;color:#6B7280;margin-bottom:6px;">صورتك الشخصية</div>
+        <label for="photoInput" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:11px;border:1.5px dashed #0088CC;background:rgba(0,136,204,.05);color:#0088CC;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;">
+          📷 التقط أو ارفع صورة
+        </label>
+        <input type="file" id="photoInput" accept="image/*" capture="user" style="display:none" onchange="previewPhoto(this)"/>
+        <div id="photoPreview" style="margin-top:8px;text-align:center;display:none">
+          <img id="photoImg" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #0088CC;"/>
+          <div style="font-size:.72rem;color:#00A846;margin-top:4px;font-weight:700;">✅ تم اختيار الصورة</div>
+        </div>
+      </div>
       <button class="btn-login" onclick="doLogin()">🚀 تسجيل ودخول</button>
     </div>
   </div>
@@ -181,14 +193,39 @@ async function doLoginExist(){
   openApp();
 }
 
+let photoBase64='';
+
+function previewPhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    // ضغط الصورة
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const max=300;
+      let w=img.width,h=img.height;
+      if(w>h){if(w>max){h=h*max/w;w=max;}}else{if(h>max){w=w*max/h;h=max;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      photoBase64=canvas.toDataURL('image/jpeg',0.7);
+      document.getElementById('photoImg').src=photoBase64;
+      document.getElementById('photoPreview').style.display='block';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 async function doLogin(){
   const name=document.getElementById('lname').value.trim();
   let phone=document.getElementById('lphone').value.trim();
   phone=phone.replace(/^0/,'');
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
-  const r=await api({action:'registerDriver',name,phone});
-  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
+  const r=await api({action:'registerDriver',name,phone,photo:photoBase64});
+  if(!r.ok){toast(r.error,'#F57C00');return;}
   me={id:r.driver.id||'drv_'+phone,name,phone};
   localStorage.setItem('me_drv',JSON.stringify(me));
   openApp();
