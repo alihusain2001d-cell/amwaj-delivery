@@ -149,11 +149,17 @@ async function api(data){const r=await fetch(GAS,{method:'POST',body:JSON.string
 
 function login(){
   if(document.getElementById('lpass').value!==SUPER_PASS){toast('❌ كلمة مرور خاطئة','#FF4444');return;}
+  localStorage.setItem('super_auth','1');
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('app').style.display='block';
   startPoll();
 }
-function logout(){clearInterval(pollTimer);document.getElementById('loginWrap').style.display='flex';document.getElementById('app').style.display='none';}
+function logout(){
+  clearInterval(pollTimer);
+  localStorage.removeItem('super_auth');
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
 
 function setFilter(f){
   curFilter=f;
@@ -365,7 +371,15 @@ let tt=null;
 function toast(msg,bg){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bg||'#A855F7';t.style.color='#fff';t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200);}
 function beep(){try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();[520,660,800].forEach((f,i)=>{const o=aCtx.createOscillator(),g=aCtx.createGain();o.connect(g);g.connect(aCtx.destination);o.frequency.value=f;const t=aCtx.currentTime+i*.14;g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.25);});}catch(e){}}
 document.addEventListener('click',()=>{try{if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}},{once:true});
-(function(){document.getElementById('loadingOverlay').style.display='none';document.getElementById('loginWrap').style.display='flex';})();
+(function(){
+  document.getElementById('loadingOverlay').style.display='none';
+  if(localStorage.getItem('super_auth')==='1'){
+    document.getElementById('app').style.display='block';
+    startPoll();
+  } else {
+    document.getElementById('loginWrap').style.display='flex';
+  }
+})();
 </script>
 </body>
 </html>
