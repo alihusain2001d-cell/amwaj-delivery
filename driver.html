@@ -232,7 +232,9 @@ async function doLogin(){
 }
 
 function doLogout(){
-  clearInterval(pollTimer);me=null;
+  clearInterval(pollTimer);
+  clearInterval(authTimer);
+  me=null;
   localStorage.removeItem('me_drv');
   document.getElementById('loginWrap').style.display='flex';
   document.getElementById('app').style.display='none';
@@ -312,13 +314,34 @@ function filterDone(){
     </div>`).join('');
 }
 
-function startPoll(){loadOrders();pollTimer=setInterval(loadOrders,4000);}
+let authTimer=null;
+
+function startPoll(){
+  loadOrders();
+  pollTimer=setInterval(loadOrders,4000);
+  // تحقق سريع من الحساب كل ثانيتين
+  authTimer=setInterval(checkAuth,2000);
+}
+
+async function checkAuth(){
+  if(!me)return;
+  const chk=await api({action:'registerDriver',name:'',phone:me.phone});
+  if(!chk.ok){
+    // محذوف أو مسحوبة موافقته
+    clearInterval(authTimer);
+    doLogout();
+  }
+}
 
 async function loadOrders(){
   if(!me)return;
   // تحقق إن المندوب لا يزال موجوداً ومعتمداً
   const chk=await api({action:'registerDriver',name:'',phone:me.phone});
   if(!chk.ok&&chk.error&&(chk.error.includes('محذوف')||chk.error.includes('غير مسجل'))){
+    doLogout();return;
+  }
+  // إذا سُحبت الموافقة
+  if(chk.ok===false&&chk.error&&chk.error.includes('مراجعة')){
     doLogout();return;
   }
   const r=await api({action:'getOrders',shopId:'ALL'});
