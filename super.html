@@ -7,13 +7,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--purple:#A855F7;--bg:#08080F;--card:#10101E;--green:#00E676;--red:#FF4444;--blue:#00C9FF;--orange:#FF9800;--gold:#FFD700;--text:#F0F0F0;--muted:#5555AA;--border:rgba(168,85,247,0.15);}
+:root{--purple:#7C3AED;--bg:#F4F6FB;--card:#FFFFFF;--green:#00A846;--red:#E53935;--blue:#0088CC;--orange:#F57C00;--gold:#E6A800;--text:#1A1A2E;--muted:#6B7280;--border:rgba(124,58,237,0.15);}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 #loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
 .lcard{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:44px 32px;width:100%;max-width:360px;text-align:center;}
 .lcard h2{font-size:1.5rem;font-weight:900;color:var(--purple);margin-bottom:5px;}
 .lcard p{color:var(--muted);font-size:.83rem;margin-bottom:28px;}
-input[type="password"]{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:13px 18px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.95rem;margin-bottom:14px;outline:none;direction:rtl;text-align:center;}
+input[type="password"]{width:100%;background:#F8FAFC;border:1.5px solid #E5E7EB;border-radius:12px;padding:13px 18px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.95rem;margin-bottom:14px;outline:none;direction:rtl;text-align:center;}
 .btn-purple{width:100%;background:linear-gradient(135deg,var(--purple),#7C3AED);color:#fff;border:none;border-radius:13px;padding:15px;font-size:1rem;font-weight:900;font-family:'Cairo',sans-serif;cursor:pointer;}
 #app{display:none;}
 .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
@@ -34,7 +34,7 @@ input[type="password"]{width:100%;background:rgba(255,255,255,0.04);border:1.5px
 .sbox{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 6px;text-align:center;}
 .sval{font-size:1.4rem;font-weight:900;}
 .slbl{font-size:.62rem;color:var(--muted);margin-top:2px;}
-.search-input{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.07);border-radius:11px;padding:10px 15px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.88rem;outline:none;direction:rtl;margin-bottom:13px;}
+.search-input{width:100%;background:#F8FAFC;border:1.5px solid rgba(255,255,255,0.07);border-radius:11px;padding:10px 15px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.88rem;outline:none;direction:rtl;margin-bottom:13px;}
 .search-input::placeholder{color:var(--muted);}
 .ocard{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:17px;margin-bottom:12px;}
 .ocard.c-sent{border-color:rgba(255,152,0,.35);}
@@ -56,7 +56,7 @@ input[type="password"]{width:100%;background:rgba(255,255,255,0.04);border:1.5px
 .btn-edit{background:rgba(0,201,255,.1);color:var(--blue);border:1px solid rgba(0,201,255,.22);border-radius:10px;padding:9px;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;flex:1;}
 .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 22px;border-radius:50px;font-weight:800;font-size:.84rem;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);min-width:220px;text-align:center;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.7);}
 .toast.on{transform:translateX(-50%) translateY(0);}
-#loadingOverlay{position:fixed;inset:0;background:#08080F;display:flex;align-items:center;justify-content:center;z-index:9999;}
+#loadingOverlay{position:fixed;inset:0;background:#F4F6FB;display:flex;align-items:center;justify-content:center;z-index:9999;}
 .spinner{width:44px;height:44px;border:3px solid rgba(168,85,247,.15);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:50px 16px;color:var(--muted);}
@@ -65,7 +65,7 @@ input[type="password"]{width:100%;background:rgba(255,255,255,0.04);border:1.5px
 .date-btn{padding:8px 14px;border-radius:10px;border:1px solid rgba(168,85,247,.35);background:rgba(168,85,247,.1);color:var(--purple);font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;}
 .total-box{background:linear-gradient(135deg,rgba(0,230,118,.15),rgba(0,230,118,.05));border:1px solid rgba(0,230,118,.3);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
-.modal-card{background:#181828;border:1px solid var(--border);border-radius:18px;padding:26px;width:100%;max-width:380px;}
+.modal-card{background:#F0F0FA;border:1px solid var(--border);border-radius:18px;padding:26px;width:100%;max-width:380px;}
 .modal-card h3{font-weight:900;margin-bottom:16px;color:var(--purple);}
 .modal-input{width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:11px;padding:11px 14px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.9rem;outline:none;direction:rtl;margin-bottom:12px;}
 @media(max-width:500px){.stats-grid{grid-template-columns:repeat(2,1fr);}.cbody{grid-template-columns:1fr;}.cf-s2{grid-column:1;}}
@@ -112,7 +112,8 @@ input[type="password"]{width:100%;background:rgba(255,255,255,0.04);border:1.5px
     <div id="shopsList" style="display:none"></div>
     <div id="statementSec" style="display:none">
       <div style="margin-bottom:12px;font-size:.85rem;color:var(--muted)">اختر المندوب والفترة</div>
-      <select id="stDrv" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.88rem;outline:none;margin-bottom:10px;" onchange="renderStatement()">
+      <input class="search-input" id="stSearch" placeholder="🔍 بحث باسم المندوب أو رقمه..." oninput="filterDriverSelect()" style="margin-bottom:10px;background:#F8FAFC;border:1.5px solid #E5E7EB;color:var(--text);"/>
+      <select id="stDrv" style="width:100%;background:#F8FAFC;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.88rem;outline:none;margin-bottom:10px;" onchange="renderStatement()">
         <option value="">-- اختر مندوب --</option>
       </select>
       <div class="date-row">
@@ -289,12 +290,21 @@ async function modalSave(){
 function closeModal(){document.getElementById('modal').style.display='none';modalAction=null;modalId=null;}
 
 // ═══ كشف الحساب ═══
-function populateDriverSelect(){
+function filterDriverSelect(){
+  const q=(document.getElementById('stSearch').value||'').toLowerCase();
   const sel=document.getElementById('stDrv');
+  const prev=sel.value;
   sel.innerHTML='<option value="">-- اختر مندوب --</option>';
-  allDrivers.filter(d=>String(d.approved)==='true'||String(d.approved)==='TRUE').forEach(d=>{
-    sel.innerHTML+=`<option value="${d.id}">${d.name} — ${d.phone}</option>`;
-  });
+  allDrivers
+    .filter(d=>String(d.approved)==='true'||String(d.approved)==='TRUE')
+    .filter(d=>!q||String(d.name||'').toLowerCase().includes(q)||String(d.phone||'').includes(q))
+    .forEach(d=>{sel.innerHTML+=`<option value="${d.id}">${d.name} — ${d.phone}</option>`;});
+  if(prev)sel.value=prev;
+}
+
+function populateDriverSelect(){
+  document.getElementById('stSearch').value='';
+  filterDriverSelect();
 }
 function stSetToday(){
   const t=new Date().toISOString().split('T')[0];
