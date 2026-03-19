@@ -317,8 +317,11 @@ function buildCard(o){
     const wa=`https://wa.me/964${String(o.drvPhone||'').replace(/^0/,'')}?text=${encodeURIComponent('مرحباً '+o.drvName+' — طلب '+o.id)}`;
     const hasLoc=o.drvLat&&o.drvLng&&String(o.drvLat)!==''&&String(o.drvLng)!=='';
     const mapsLink=hasLoc?`https://maps.google.com/?q=${o.drvLat},${o.drvLng}`:'';
+    const photo=o.drvPhoto&&String(o.drvPhoto).trim()!==''
+      ?`<img src="${o.drvPhoto}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--green);flex-shrink:0;"/>`
+      :`<div style="width:50px;height:50px;border-radius:50%;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">🛵</div>`;
     drv=`<div class="drv-row">
-      <span style="font-size:1.8rem">🛵</span>
+      ${photo}
       <div style="flex:1">
         <div style="font-weight:900;font-size:.95rem">${o.drvName}</div>
         <div style="color:var(--muted);font-size:.77rem;margin-top:2px">📞 ${o.drvPhone}</div>
