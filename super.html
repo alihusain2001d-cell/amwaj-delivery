@@ -199,9 +199,12 @@ function renderDrivers(){
     const approved=String(d.approved)==='true'||String(d.approved)==='TRUE';
     return`<div style="background:var(--card);border:1px solid ${approved?'rgba(0,230,118,.3)':'rgba(255,152,0,.4)'};border-radius:15px;padding:16px;margin-bottom:10px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div>
-          <div style="font-weight:900;font-size:.95rem">${d.name||'—'}</div>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:3px">📞 ${d.phone}</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${d.photo?`<img src="${d.photo}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid ${approved?'var(--green)':'var(--orange)'}"/>`:`<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:1.4rem;">🛵</div>`}
+          <div>
+            <div style="font-weight:900;font-size:.95rem">${d.name||'—'}</div>
+            <div style="color:var(--muted);font-size:.78rem;margin-top:3px">📞 ${d.phone}</div>
+          </div>
         </div>
         <span style="padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:800;background:${approved?'rgba(0,230,118,.12)':'rgba(255,152,0,.12)'};color:${approved?'var(--green)':'var(--orange)'}">
           ${approved?'✅ موافق':'⏳ بانتظار'}
