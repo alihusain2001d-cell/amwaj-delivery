@@ -246,11 +246,12 @@ function filterDone(){
       return dStr===dateVal;
     });
   }
-  const total=filtered.reduce((s,o)=>s+Number(o.price||0),0);
+  // إجمالي سعر التوصيل فقط
+  const deliveryTotal=filtered.reduce((s,o)=>s+Number(String(o.deliveryPrice||'0').replace(/,/g,'')),0);
   const totalEl=document.getElementById('doneTotal');
   if(filtered.length){
     totalEl.style.display='block';
-    document.getElementById('doneTotalVal').textContent=total.toLocaleString('ar-IQ')+' د.ع';
+    document.getElementById('doneTotalVal').textContent=deliveryTotal.toLocaleString('ar-IQ')+' د.ع';
     document.getElementById('doneTotalCount').textContent=filtered.length+' طلب';
   }else{
     totalEl.style.display='none';
@@ -260,8 +261,17 @@ function filterDone(){
   el.innerHTML=filtered.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).map(o=>`
     <div class="ocard mine-conf" style="border-color:rgba(0,168,70,.3);">
       <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf" style="background:rgba(0,168,70,.12);color:var(--green);">✅ مسلّم</span><span class="ctime">${ago(o.ts)}</span></div>
-      <div class="shop-row"><span style="font-size:1rem">🏪</span><div><div class="shop-nm">${o.shopName}</div><div class="shop-ph">📌 ${o.shopArea}</div></div></div>
-      <div class="cmeta"><div class="cprice">${fmt(o.price)} د.ع</div><div style="font-size:.77rem;color:var(--muted);">📍 ${o.area}</div></div>
+      <div style="background:#F5F3FF;border-radius:9px;padding:7px 10px;margin-bottom:7px;font-size:.82rem;">
+        <span style="font-weight:800;color:#7B1FA2;">🏪 ${o.shopName}</span>
+        <span style="color:var(--muted);margin-right:8px;">📌 ${o.shopArea}</span>
+      </div>
+      <div class="cmeta">
+        <div>
+          <div class="cprice">${fmt(o.price)} د.ع</div>
+          ${o.deliveryPrice&&String(o.deliveryPrice).trim()!==''?`<div style="font-size:.72rem;color:var(--green);font-weight:700;">توصيل: ${fmt(o.deliveryPrice)} د.ع</div>`:''}
+        </div>
+        <div style="font-size:.77rem;color:var(--muted);">📍 ${o.area}</div>
+      </div>
     </div>`).join('');
 }
 
@@ -302,8 +312,11 @@ async function loadOrders(){
 }
 
 function shopRow(o){
-  const hasLoc=o.shopLat&&o.shopLng&&String(o.shopLat)!=='';
-  const mapsLink=hasLoc?`https://maps.google.com/?q=${o.shopLat},${o.shopLng}`:'';
+  // الموقع من shopLat/shopLng أو من بيانات المحل المحفوظة في الشيت
+  const lat=o.shopLat||o['shopLat']||'';
+  const lng=o.shopLng||o['shopLng']||'';
+  const hasLoc=lat&&lng&&String(lat).trim()!==''&&String(lng).trim()!=='';
+  const mapsLink=hasLoc?`https://maps.google.com/?q=${lat},${lng}`:'';
   const wa=`https://wa.me/964${String(o.shopPhone||'').replace(/^0/,'')}`;
   return`<div class="shop-row">
     <span style="font-size:1.1rem">🏪</span>
@@ -371,7 +384,10 @@ async function markDone(id){
   loadOrders();
 }
 
-function fmt(n){return Number(n).toLocaleString('ar-IQ');}
+function fmt(n){
+  const num=Number(String(n).replace(/,/g,''));
+  return isNaN(num)?'0':num.toLocaleString('ar-IQ');
+}
 function ago(ts){const m=Math.floor((Date.now()-new Date(ts))/60000);return m<1?'الآن':m<60?`${m} دق`:m<1440?`${Math.floor(m/60)} س`:`${Math.floor(m/1440)} يوم`;}
 let tt=null;
 function toast(msg,bg,color){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bg||'#00A846';t.style.color=color||'#fff';t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
