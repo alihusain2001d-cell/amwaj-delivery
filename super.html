@@ -59,6 +59,7 @@ input[type="password"]{width:100%;background:#F8FAFC;border:1.5px solid #E5E7EB;
 #loadingOverlay{position:fixed;inset:0;background:#F4F6FB;display:flex;align-items:center;justify-content:center;z-index:9999;}
 .spinner{width:44px;height:44px;border:3px solid rgba(168,85,247,.15);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
 .empty{text-align:center;padding:50px 16px;color:var(--muted);}
 .date-row{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;}
 .date-row input[type=date]{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 12px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.85rem;outline:none;flex:1;}
@@ -142,7 +143,7 @@ input[type="password"]{width:100%;background:#F8FAFC;border:1.5px solid #E5E7EB;
 <script>
 const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX3GMC5ocvwMQ3VZnD564Bom4Otz3S0j6WUEGZ-q/exec';
 const SUPER_PASS='super2024';
-let curFilter='all',allOrders=[],allDrivers=[],allShops=[],pollTimer=null,aCtx=null,prevSentCount=-1;
+let curFilter='all',allOrders=[],allDrivers=[],allShops=[],pollTimer=null,aCtx=null,prevSentCount=-1,prevPendCount=-1;
 let modalAction=null,modalId=null;
 
 async function api(data){const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data),redirect:'follow'});return r.json();}
@@ -188,6 +189,15 @@ async function loadData(){
   document.getElementById('s-done').textContent=allOrders.filter(o=>o.status==='delivered'&&new Date(o.ts).toDateString()===today).length;
   document.getElementById('s-pend').textContent=pend;
   document.getElementById('fc-drivers').textContent=pend>0?'⚠️'+pend:allDrivers.length;
+  // إشعار لما يجي مندوب جديد
+  if(prevPendCount>=0&&pend>prevPendCount){
+    beep();
+    toast('🛵 مندوب جديد يطلب الانضمام!','#7C3AED');
+    document.getElementById('fc-drivers').style.background='rgba(229,57,53,.5)';
+    document.getElementById('fc-drivers').style.animation='pulse 1s ease infinite';
+  }
+  if(pend===0)document.getElementById('fc-drivers').style.animation='';
+  prevPendCount=pend;
   document.getElementById('fc-shops').textContent=allShops.length;
   ['all','sent','confirmed','delivered','cancelled'].forEach(s=>{
     const el=document.getElementById('fc-'+s);
