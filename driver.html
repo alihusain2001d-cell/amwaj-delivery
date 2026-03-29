@@ -76,13 +76,13 @@ input:focus{border-color:var(--cyan);}
     </div>
     <!-- دخول -->
     <div id="formLogin">
-      <input type="tel" id="lphone2" placeholder="07xxxxxxxxx — رقمك المسجل" maxlength="11"/>
+      <input type="tel" id="lphone2" placeholder="07xxxxxxxxx — رقمك المسجل" maxlength="11" oninput="this.value=toEn(this.value)"/>
       <button class="btn-login" onclick="doLoginExist()">🔑 دخول</button>
     </div>
     <!-- تسجيل جديد -->
     <div id="formReg" style="display:none">
       <input type="text" id="lname" placeholder="اسمك الكريم"/>
-      <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11"/>
+      <input type="tel" id="lphone" placeholder="07xxxxxxxxx" maxlength="11" oninput="this.value=toEn(this.value)"/>
       <!-- صورة المندوب -->
       <div style="margin-bottom:12px;">
         <div style="font-size:.72rem;font-weight:700;color:#6B7280;margin-bottom:6px;">صورتك الشخصية</div>
@@ -188,19 +188,18 @@ function switchTab(t){
 }
 
 async function doLoginExist(){
-  let phone=document.getElementById('lphone2').value.trim();
+  let phone=toEn(document.getElementById('lphone2').value.trim());
   phone=phone.replace(/^0/,'');
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
-  const r2=await api({action:'registerDriver',name:'',phone});
+  const r2=await api({action:'checkDriver',phone});
   if(!r2.ok){
-    if(r2.pending||r2.error&&r2.error.includes('انتظر')){
+    if(r2.error&&r2.error.includes('مراجعة')){
       toast('⏳ حسابك بانتظار موافقة الإدارة','#F57C00');return;
     }
     toast('❌ رقمك غير مسجل — سجّل حساباً جديداً','#E53935');
     switchTab('reg');return;
   }
   const drv=r2.driver;
-  if(!drv||!drv.name){toast('❌ رقمك غير مسجل — سجّل جديداً','#E53935');switchTab('reg');return;}
   me={id:drv.id,name:drv.name,phone:drv.phone};
   localStorage.setItem('me_drv',JSON.stringify(me));
   openApp();
@@ -233,13 +232,13 @@ function previewPhoto(input){
 
 async function doLogin(){
   const name=document.getElementById('lname').value.trim();
-  let phone=document.getElementById('lphone').value.trim();
+  let phone=toEn(document.getElementById('lphone').value.trim());
   phone=phone.replace(/^0/,'');
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r=await api({action:'registerDriver',name,phone,photo:photoBase64});
   if(r.ok){
-    // الرقم مسجل مسبقاً — حوّله على تبويب الدخول
+    // الرقم مسجل مسبقاً ومعتمد — حوّله على تبويب الدخول
     toast('⚠️ رقمك مسجل مسبقاً — ادخل من هنا','#F57C00');
     switchTab('login');
     document.getElementById('lphone2').value='0'+phone;
@@ -356,25 +355,15 @@ function startPoll(){
 
 async function checkAuth(){
   if(!me)return;
-  const chk=await api({action:'registerDriver',name:'',phone:me.phone});
-  if(!chk.ok){
-    // محذوف أو مسحوبة موافقته
-    clearInterval(authTimer);
-    doLogout();
-  }
+  const chk=await api({action:'checkDriver',phone:me.phone});
+  if(!chk.ok){clearInterval(authTimer);doLogout();}
 }
 
 async function loadOrders(){
   if(!me)return;
   // تحقق إن المندوب لا يزال موجوداً ومعتمداً
-  const chk=await api({action:'registerDriver',name:'',phone:me.phone});
-  if(!chk.ok&&chk.error&&(chk.error.includes('محذوف')||chk.error.includes('غير مسجل'))){
-    doLogout();return;
-  }
-  // إذا سُحبت الموافقة
-  if(chk.ok===false&&chk.error&&chk.error.includes('مراجعة')){
-    doLogout();return;
-  }
+  const chk=await api({action:'checkDriver',phone:me.phone});
+  if(!chk.ok){doLogout();return;}
   const r=await api({action:'getOrders',shopId:'ALL'});
   if(!r.ok)return;
   const all=r.orders||[];
@@ -497,6 +486,7 @@ async function markDone(id){
   loadOrders();
 }
 
+function toEn(s){return String(s).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));}
 function fmt(n){
   const num=Number(String(n).replace(/,/g,''));
   return isNaN(num)?'0':num.toLocaleString('ar-IQ');
