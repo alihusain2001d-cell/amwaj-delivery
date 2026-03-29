@@ -424,16 +424,28 @@ function buildMine(o){
   return`<div class="ocard mine-conf">
     <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf">🛵 في الطريق</span><span class="ctime">${ago(o.ts)}</span></div>
     ${shopRow(o)}
+    ${custRow(o)}
     <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
     <div class="cmeta">
       <div>
         <div class="cprice">${fmt(o.price)} د.ع</div>
         ${o.deliveryPrice?`<div style="font-size:.72rem;color:var(--green);font-weight:700;">توصيل: ${fmt(o.deliveryPrice)} د.ع</div>`:''}
       </div>
-      <div class="ccust">👤 ${o.custName} — ${o.custPhone}</div>
     </div>
     ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
     <button class="btn-delivered" onclick="markDone('${o.id}')">✅ تم التسليم</button>
+  </div>`;
+}
+
+function custRow(o){
+  const wa=`https://wa.me/964${String(o.custPhone||'').replace(/^0/,'')}`;
+  return`<div style="display:flex;align-items:center;gap:9px;background:#FFF8E7;border:1px solid rgba(245,124,0,.2);border-radius:11px;padding:9px 12px;margin-bottom:9px;">
+    <span style="font-size:1.1rem">👤</span>
+    <div style="flex:1">
+      <div style="font-weight:900;font-size:.85rem;color:var(--orange);">${o.custName}</div>
+      <div style="font-size:.78rem;color:var(--text);font-weight:700;margin-top:2px;">📞 ${o.custPhone}</div>
+    </div>
+    <a href="${wa}" target="_blank" style="display:flex;align-items:center;gap:3px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25D366;border-radius:7px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;">💬 واتساب</a>
   </div>`;
 }
 
@@ -441,6 +453,7 @@ function buildAvail(o){
   return`<div class="ocard available">
     <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-avail">🆕 متاح</span><span class="ctime">${ago(o.ts)}</span></div>
     ${shopRow(o)}
+    ${custRow(o)}
     <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
     ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
     <div class="cmeta">
@@ -448,7 +461,6 @@ function buildAvail(o){
         <div class="cprice">${fmt(o.price)} د.ع</div>
         ${o.deliveryPrice?`<div style="font-size:.72rem;color:var(--green);font-weight:700;">توصيل: ${fmt(o.deliveryPrice)} د.ع</div>`:''}
       </div>
-      <div class="ccust">👤 ${o.custName}</div>
     </div>
     <button class="btn-accept" onclick="accept('${o.id}')">⚡ قبول الطلب</button>
   </div>`;
