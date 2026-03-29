@@ -1,0 +1,38 @@
+{
+  "name": "السنونو للتوصيل",
+  "short_name": "السنونو",
+  "description": "نظام إدارة التوصيل",
+  "start_url": "/driver.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F0F4F8",
+  "theme_color": "#F57C00",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "صفحة المحل",
+      "url": "/admin.html",
+      "description": "لوحة تحكم المحل"
+    },
+    {
+      "name": "صفحة المندوب",
+      "url": "/driver.html",
+      "description": "واجهة المندوب"
+    }
+  ]
+}
