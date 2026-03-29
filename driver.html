@@ -186,8 +186,8 @@ async function doLoginExist(){
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r2=await api({action:'registerDriver',name:'',phone});
   if(!r2.ok){
-    if(r2.error&&r2.error.includes('مراجعة')){
-      toast('⏳ حسابك قيد المراجعة','#F57C00');return;
+    if(r2.pending||r2.error&&r2.error.includes('انتظر')){
+      toast('⏳ حسابك بانتظار موافقة الإدارة','#F57C00');return;
     }
     toast('❌ رقمك غير مسجل — سجّل حساباً جديداً','#E53935');
     switchTab('reg');return;
@@ -231,10 +231,29 @@ async function doLogin(){
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r=await api({action:'registerDriver',name,phone,photo:photoBase64});
-  if(!r.ok){toast(r.error,'#F57C00');return;}
-  me={id:r.driver.id||'drv_'+phone,name,phone};
-  localStorage.setItem('me_drv',JSON.stringify(me));
-  openApp();
+  if(r.ok){
+    // الرقم موجود ومعتمد — ادخل مباشرة
+    me={id:r.driver.id||'drv_'+phone,name:r.driver.name,phone};
+    localStorage.setItem('me_drv',JSON.stringify(me));
+    openApp();
+    return;
+  }
+  if(r.pending){
+    document.getElementById('formReg').innerHTML=`
+      <div style="text-align:center;padding:20px 10px;">
+        <div style="font-size:3rem;margin-bottom:12px">⏳</div>
+        <div style="font-weight:900;font-size:1.1rem;color:#F57C00;margin-bottom:8px;">تم إرسال طلبك!</div>
+        <div style="color:#6B7280;font-size:.88rem;line-height:1.7;">انتظر موافقة الإدارة<br/>سيتم تفعيل حسابك قريباً</div>
+      </div>`;
+    return;
+  }
+  // رقم موجود بالفعل — وجّهه لتبويب الدخول
+  if(r.error&&r.error.includes('مسجل')){
+    toast('⚠️ رقمك مسجل — استخدم تبويب دخول','#F57C00');
+    switchTab('login');
+    return;
+  }
+  toast('❌ '+r.error,'#E53935');
 }
 
 function doLogout(){
@@ -437,7 +456,8 @@ function buildAvail(o){
 }
 
 async function accept(id){
-  // أخذ الموقع
+  const btn=document.querySelector(`[onclick="accept('${id}')"]`);
+  if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px;justify-content:center;"><span style="width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;"></span> جاري التحميل...</span>';}
   let drvLat=null,drvLng=null;
   try{
     const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
@@ -445,11 +465,16 @@ async function accept(id){
   }catch(e){}
   const r=await api({action:'acceptOrder',orderId:id,drvId:me.id,drvName:me.name,drvPhone:me.phone,drvLat,drvLng});
   if(r.ok)toast('✅ قبلت الطلب — في الطريق!','#00A846');
-  else toast('⚠️ '+r.error,'#E53935');
+  else{
+    toast('⚠️ '+r.error,'#E53935');
+    if(btn){btn.disabled=false;btn.innerHTML='⚡ قبول الطلب';}
+  }
   loadOrders();
 }
 
 async function markDone(id){
+  const btn=document.querySelector(`[onclick="markDone('${id}')"]`);
+  if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px;justify-content:center;"><span style="width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;"></span> جاري التسليم...</span>';}
   await api({action:'deliverOrder',orderId:id});
   toast('🎉 تم التسليم بنجاح!','#00A846');
   loadOrders();
