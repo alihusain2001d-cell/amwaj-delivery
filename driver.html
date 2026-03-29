@@ -439,11 +439,12 @@ function buildMine(o){
 
 function custRow(o){
   const wa=`https://wa.me/964${String(o.custPhone||'').replace(/^0/,'')}`;
+  const tel=`tel:${o.custPhone}`;
   return`<div style="display:flex;align-items:center;gap:9px;background:#FFF8E7;border:1px solid rgba(245,124,0,.2);border-radius:11px;padding:9px 12px;margin-bottom:9px;">
     <span style="font-size:1.1rem">👤</span>
     <div style="flex:1">
       <div style="font-weight:900;font-size:.85rem;color:var(--orange);">${o.custName}</div>
-      <div style="font-size:.78rem;color:var(--text);font-weight:700;margin-top:2px;">📞 ${o.custPhone}</div>
+      <a href="${tel}" style="font-size:.78rem;color:var(--text);font-weight:700;margin-top:2px;text-decoration:none;display:block;">📞 ${o.custPhone}</a>
     </div>
     <a href="${wa}" target="_blank" style="display:flex;align-items:center;gap:3px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25D366;border-radius:7px;padding:5px 9px;font-size:.71rem;font-weight:800;text-decoration:none;">💬 واتساب</a>
   </div>`;
