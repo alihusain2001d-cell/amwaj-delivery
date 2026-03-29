@@ -112,6 +112,11 @@ textarea{min-height:60px;resize:none;}
     <button class="exit-btn" onclick="doLogout()">خروج</button>
     <button onclick="updateShopLocation()" style="background:none;border:1px solid #0088CC;color:#0088CC;border-radius:8px;padding:5px 9px;font-family:'Cairo',sans-serif;font-size:.72rem;cursor:pointer;">📍 تحديث موقعي</button>
   </div>
+  <!-- بانر تنبيه الموقع -->
+  <div id="locBanner" style="display:none;background:#FFF3CD;border-bottom:2px solid #FFC107;padding:10px 16px;display:none;align-items:center;justify-content:space-between;gap:10px;">
+    <span style="font-size:.82rem;font-weight:700;color:#856404;">⚠️ موقع محلك غير محدد — المندوبون لن يروا موقعك</span>
+    <button onclick="updateShopLocation()" style="background:#F57C00;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;white-space:nowrap;">📍 حدد الآن</button>
+  </div>
   <div class="tabs">
     <div class="tab on" id="t1" onclick="goTab(1)">📋 الطلبات</div>
     <div class="tab" id="t2" onclick="goTab(2)">✅ المنجزة</div>
@@ -227,6 +232,7 @@ async function updateShopLocation(){
       await api({action:'updateShopLocation',shopId:shop.id,lat,lng});
       shop.lat=lat;shop.lng=lng;
       localStorage.setItem('amwaj_shop',JSON.stringify(shop));
+      checkLocBanner();
       toast('✅ تم تحديث موقع المحل','#00A846');
     },
     ()=>toast('⚠️ تعذّر التحديد','#E53935'),
@@ -271,9 +277,19 @@ function enterApp(s){
   document.getElementById('app').style.display='block';
   document.getElementById('topName').textContent=s.name;
   document.getElementById('topSub').textContent=s.area+' — '+s.phone;
+  checkLocBanner();
   startPoll();
   loadDeliveryPrices();
   if('Notification'in window)Notification.requestPermission();
+}
+
+function checkLocBanner(){
+  const b=document.getElementById('locBanner');
+  if(!shop.lat||!shop.lng||String(shop.lat).trim()===''||String(shop.lng).trim()===''){
+    b.style.display='flex';
+  } else {
+    b.style.display='none';
+  }
 }
 
 function doLogout(){
@@ -304,6 +320,14 @@ async function loadOrders(){
   }
   // تحقق إضافي — هل المحل لا يزال موجوداً
   if(r.deleted){doLogout();return;}
+  // تحقق موقع المحل من الشيت
+  if(r.shopLat!==undefined){
+    const latOk=r.shopLat&&r.shopLat.trim()!=='';
+    const lngOk=r.shopLng&&r.shopLng.trim()!=='';
+    if(latOk&&lngOk){shop.lat=r.shopLat;shop.lng=r.shopLng;localStorage.setItem('amwaj_shop',JSON.stringify(shop));}
+    else{shop.lat='';shop.lng='';localStorage.setItem('amwaj_shop',JSON.stringify(shop));}
+    checkLocBanner();
+  }
   const orders=r.orders||[];
   cachedOrders=orders;
   const today=new Date().toDateString();
