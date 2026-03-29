@@ -118,7 +118,7 @@ input:focus{border-color:var(--cyan);}
       </div>
       <div>
         <div class="sec-hd">📦 الطلبات المتاحة <span class="pill" id="availPill" style="display:none">0</span></div>
-        <div id="availList"></div>
+        <div id="availList"><div style="text-align:center;padding:40px 16px;color:var(--muted);"><div style="width:36px;height:36px;border:3px solid rgba(0,136,204,.15);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;"></div><p style="font-size:.85rem;">جاري التحميل...</p></div></div>
       </div>
     </div>
     <div id="dTc2" style="display:none">
@@ -145,7 +145,7 @@ input:focus{border-color:var(--cyan);}
 <div class="toast" id="toast"></div>
 <script>
 const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX3GMC5ocvwMQ3VZnD564Bom4Otz3S0j6WUEGZ-q/exec';
-let me=null,pollTimer=null,prevAvail=-1,aCtx=null;
+let me=null,pollTimer=null,prevAvail=-1,aCtx=null,firstLoad=true;
 
 async function api(data){
   const r=await fetch(GAS,{method:'POST',body:JSON.stringify(data),redirect:'follow'});
@@ -231,14 +231,8 @@ async function doLogin(){
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r=await api({action:'registerDriver',name,phone,photo:photoBase64});
-  if(r.ok){
-    // الرقم موجود ومعتمد — ادخل مباشرة
-    me={id:r.driver.id||'drv_'+phone,name:r.driver.name,phone};
-    localStorage.setItem('me_drv',JSON.stringify(me));
-    openApp();
-    return;
-  }
   if(r.pending){
+    // طلب جديد — يظهر رسالة انتظار
     document.getElementById('formReg').innerHTML=`
       <div style="text-align:center;padding:20px 10px;">
         <div style="font-size:3rem;margin-bottom:12px">⏳</div>
@@ -247,13 +241,10 @@ async function doLogin(){
       </div>`;
     return;
   }
-  // رقم موجود بالفعل — وجّهه لتبويب الدخول
-  if(r.error&&r.error.includes('مسجل')){
-    toast('⚠️ رقمك مسجل — استخدم تبويب دخول','#F57C00');
-    switchTab('login');
-    return;
-  }
-  toast('❌ '+r.error,'#E53935');
+  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
+  me={id:r.driver.id||'drv_'+phone,name,phone};
+  localStorage.setItem('me_drv',JSON.stringify(me));
+  openApp();
 }
 
 function doLogout(){
@@ -266,6 +257,7 @@ function doLogout(){
 }
 
 function openApp(){
+  firstLoad=true;
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('topName').textContent=me.name;
@@ -456,8 +448,7 @@ function buildAvail(o){
 }
 
 async function accept(id){
-  const btn=document.querySelector(`[onclick="accept('${id}')"]`);
-  if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px;justify-content:center;"><span style="width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;"></span> جاري التحميل...</span>';}
+  // أخذ الموقع
   let drvLat=null,drvLng=null;
   try{
     const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
@@ -465,16 +456,11 @@ async function accept(id){
   }catch(e){}
   const r=await api({action:'acceptOrder',orderId:id,drvId:me.id,drvName:me.name,drvPhone:me.phone,drvLat,drvLng});
   if(r.ok)toast('✅ قبلت الطلب — في الطريق!','#00A846');
-  else{
-    toast('⚠️ '+r.error,'#E53935');
-    if(btn){btn.disabled=false;btn.innerHTML='⚡ قبول الطلب';}
-  }
+  else toast('⚠️ '+r.error,'#E53935');
   loadOrders();
 }
 
 async function markDone(id){
-  const btn=document.querySelector(`[onclick="markDone('${id}')"]`);
-  if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px;justify-content:center;"><span style="width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;"></span> جاري التسليم...</span>';}
   await api({action:'deliverOrder',orderId:id});
   toast('🎉 تم التسليم بنجاح!','#00A846');
   loadOrders();
