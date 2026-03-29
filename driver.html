@@ -423,7 +423,9 @@ function shopRow(o){
 function buildMine(o){
   return`<div class="ocard mine-conf">
     <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-conf">🛵 في الطريق</span><span class="ctime">${ago(o.ts)}</span></div>
+    <div style="font-size:.7rem;font-weight:800;color:var(--muted);margin-bottom:5px;">🏪 معلومات المحل</div>
     ${shopRow(o)}
+    <div style="font-size:.7rem;font-weight:800;color:var(--muted);margin-bottom:5px;">👤 معلومات الزبون</div>
     ${custRow(o)}
     <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
     <div class="cmeta">
@@ -453,7 +455,9 @@ function custRow(o){
 function buildAvail(o){
   return`<div class="ocard available">
     <div class="ctop"><span class="cid">${o.id}</span><span class="chip ch-avail">🆕 متاح</span><span class="ctime">${ago(o.ts)}</span></div>
+    <div style="font-size:.7rem;font-weight:800;color:var(--muted);margin-bottom:5px;">🏪 معلومات المحل</div>
     ${shopRow(o)}
+    <div style="font-size:.7rem;font-weight:800;color:var(--muted);margin-bottom:5px;">👤 معلومات الزبون</div>
     ${custRow(o)}
     <div class="carea">📍 ${o.area}</div><div class="caddr">${o.addr}</div>
     ${o.note?`<div class="cnote">📝 ${o.note}</div>`:''}
