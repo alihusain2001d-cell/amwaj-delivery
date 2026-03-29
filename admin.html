@@ -71,6 +71,10 @@ textarea{min-height:60px;resize:none;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:42px 16px;color:var(--muted);}
 .empty-ico{font-size:46px;opacity:.3;margin-bottom:10px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal{background:var(--card);border-radius:20px;padding:22px 18px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+.modal-title{font-size:.9rem;font-weight:900;color:var(--orange);margin-bottom:16px;}
+.btn-green{background:linear-gradient(135deg,#00A846,#007A33);color:#fff;}
 @media(max-width:460px){.stats{grid-template-columns:repeat(2,1fr);}.fg{grid-template-columns:1fr;}.fg .s2{grid-column:1;}.cbody{grid-template-columns:1fr;}.cf-s2{grid-column:1;}}
 </style>
 </head>
@@ -89,9 +93,9 @@ textarea{min-height:60px;resize:none;}
       <button class="btn btn-gold" onclick="doLogin()">🔑 دخول</button>
     </div>
     <div id="registerForm" style="display:none">
-      <span class="lbl">اسم المحل</span><input type="text" id="rName" placeholder=""/>
+      <span class="lbl">اسم المحل</span><input type="text" id="rName" placeholder="أمواج للإلكترونيات"/>
       <span class="lbl">رقم الهاتف</span><input type="tel" id="rPhone" placeholder="07xxxxxxxxx" maxlength="11" oninput="this.value=this.value.replace(/^0/,'')"/>
-      <span class="lbl">المنطقة</span><input type="text" id="rArea" placeholder=""/>
+      <span class="lbl">المنطقة</span><input type="text" id="rArea" placeholder="الكرامة"/>
       <span class="lbl">كلمة المرور</span><input type="password" id="rPass" placeholder="اختر كلمة مرور"/>
       <button type="button" onclick="getShopLocation()" style="width:100%;padding:11px;border-radius:11px;border:1.5px solid #0088CC;background:rgba(0,136,204,.07);color:#0088CC;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;">📍 تحديد موقع المحل</button>
       <div id="locStatus" style="font-size:.75rem;text-align:center;color:var(--muted);margin-bottom:10px;min-height:16px;"></div>
@@ -144,6 +148,23 @@ textarea{min-height:60px;resize:none;}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="modal-bg" id="editModal" style="display:none" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <div class="modal-title">✏️ تعديل الطلب</div>
+    <div class="fg">
+      <div><span class="lbl">المنطقة</span><select id="eArea" onchange="onEditAreaChange()"><option value="">-- اختر --</option></select></div>
+      <div><span class="lbl">المبلغ (دينار)</span><input type="number" id="ePrice" placeholder="0"/></div>
+      <div class="s2"><span class="lbl">العنوان</span><textarea id="eAddr" placeholder="الشارع، قرب..."></textarea></div>
+      <div><span class="lbl">اسم الزبون</span><input type="text" id="eName" placeholder="الاسم"/></div>
+      <div><span class="lbl">هاتف الزبون</span><input type="tel" id="ePhone" placeholder="07xxxxxxxxx" maxlength="11"/></div>
+      <div class="s2"><span class="lbl">ملاحظة</span><input type="text" id="eNote" placeholder="اختياري..."/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-green" id="eSaveBtn" onclick="saveEdit()">💾 حفظ التعديل</button>
+      <button class="btn btn-ghost-red" style="width:auto;padding:13px 18px;" onclick="closeEdit()">إلغاء</button>
+    </div>
+  </div>
+</div>
 <script>
 const GAS='https://script.google.com/macros/s/AKfycbwjyGroSoP1r0Z7wRAIDhAf88iuJX3GMC5ocvwMQ3VZnD564Bom4Otz3S0j6WUEGZ-q/exec';
 let shop=null,curtab=1,pollTimer=null,lastConf=-1,aCtx=null;
@@ -284,6 +305,7 @@ async function loadOrders(){
   // تحقق إضافي — هل المحل لا يزال موجوداً
   if(r.deleted){doLogout();return;}
   const orders=r.orders||[];
+  cachedOrders=orders;
   const today=new Date().toDateString();
   document.getElementById('s1').textContent=orders.filter(o=>o.status==='sent').length;
   document.getElementById('s2').textContent=orders.filter(o=>o.status==='confirmed').length;
@@ -356,8 +378,62 @@ function buildCard(o){
       <div class="cf-s2"><div class="cf-val" style="font-size:.8rem">🗺 ${o.addr}</div></div>
       ${o.note?`<div class="cf-s2"><div class="cf-val" style="font-size:.8rem">📝 ${o.note}</div></div>`:''}
     </div>${drv}
-    <div class="cactions"><button class="btn btn-ghost-red" onclick="cancelOrder('${o.id}')">✕ إلغاء</button></div>
+    <div class="cactions"><button class="btn btn-ghost-red" onclick="cancelOrder('${o.id}')">✕ إلغاء</button><button class="btn" style="background:rgba(0,136,204,.1);color:#0088CC;border:1px solid rgba(0,136,204,.25);" onclick="openEdit('${o.id}')">✏️ تعديل</button></div>
   </div>`;
+}
+
+let editOrderId=null,cachedOrders=[];
+
+function openEdit(id){
+  const o=cachedOrders.find(x=>x.id===id);
+  if(!o)return;
+  editOrderId=id;
+  // ملأ حقول المنطقة
+  const sel=document.getElementById('eArea');
+  sel.innerHTML='<option value="">-- اختر --</option>';
+  deliveryPrices.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=String(p.area).trim();
+    opt.textContent=String(p.area).trim();
+    sel.appendChild(opt);
+  });
+  const other=document.createElement('option');
+  other.value='أخرى';other.textContent='أخرى';
+  sel.appendChild(other);
+  sel.value=o.area||'';
+  document.getElementById('ePrice').value=o.price||'';
+  document.getElementById('eAddr').value=o.addr||'';
+  document.getElementById('eName').value=o.custName||'';
+  document.getElementById('ePhone').value=o.custPhone||'';
+  document.getElementById('eNote').value=o.note||'';
+  document.getElementById('editModal').style.display='flex';
+}
+
+function closeEdit(){
+  document.getElementById('editModal').style.display='none';
+  editOrderId=null;
+}
+
+function onEditAreaChange(){
+  // يمكن إضافة منطق سعر التوصيل هنا إذا تريد
+}
+
+async function saveEdit(){
+  const area=document.getElementById('eArea').value;
+  const price=document.getElementById('ePrice').value;
+  const addr=document.getElementById('eAddr').value;
+  const custName=document.getElementById('eName').value;
+  const custPhone=document.getElementById('ePhone').value;
+  const note=document.getElementById('eNote').value;
+  if(!area||!addr||!price||+price<=0||!custName||!custPhone){toast('⚠️ أكمل الحقول','#F57C00');return;}
+  const btn=document.getElementById('eSaveBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري...';
+  const r=await api({action:'editOrder',orderId:editOrderId,area,price,addr,custName,custPhone,note});
+  btn.disabled=false;btn.innerHTML='💾 حفظ التعديل';
+  if(!r.ok){toast('❌ '+r.error,'#E53935');return;}
+  toast('✅ تم التعديل','#00A846');
+  closeEdit();
+  loadOrders();
 }
 
 async function sendOrder(){
