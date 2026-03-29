@@ -231,6 +231,13 @@ async function doLogin(){
   if(!name){toast('⚠️ أدخل اسمك','#F57C00');return;}
   if(!phone||phone.length<10){toast('⚠️ أدخل رقمك','#F57C00');return;}
   const r=await api({action:'registerDriver',name,phone,photo:photoBase64});
+  if(r.ok){
+    // الرقم مسجل مسبقاً — حوّله على تبويب الدخول
+    toast('⚠️ رقمك مسجل مسبقاً — ادخل من هنا','#F57C00');
+    switchTab('login');
+    document.getElementById('lphone2').value='0'+phone;
+    return;
+  }
   if(r.pending){
     // طلب جديد — يظهر رسالة انتظار
     document.getElementById('formReg').innerHTML=`
